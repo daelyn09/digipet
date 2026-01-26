@@ -43,6 +43,11 @@ def blogs():
     singlepost=Blog.query.get(1)
     return render_template("blogs.html",param=param,singlepost=singlepost)
 
+@app.route("/blogdetail", methods=["GET"])
+def blogdetail():
+    singlepost=Blog.query.get(1)
+    return render_template("blogdetail.html",param=param, singlepost=singlepost)
+
 @app.route("/settings")
 def settings():
     return render_template("settings.html",param=param)
