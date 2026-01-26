@@ -3546,3 +3546,9 @@ form textarea{
 .name input{
 	width: 100px;
 }
+
+.stats{
+	padding: 20px;
+	margin: 20px;
+	font-size: 25px;
+}
