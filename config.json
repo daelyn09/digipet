@@ -1,0 +1,9 @@
+{
+    "parameters":
+    {
+        "secret_key":"12345",
+        "local_server":true,
+        "local_uri":"mysql://root@localhost/digipet",
+        "title":"DigiPet"
+    }
+}

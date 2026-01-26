@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} 
+Blog Post
+{% endblock %}
+{% block body %}
+            <div class="wrapper style1">
+					<div class="container">
+						<header>
+							<title>Post a Blog</title>
+							<body>
+								<h2>Create a Blog Post</h2>
+								<form method="POST">
+									<!-- Title -->
+									<label>Title</label>
+									<input type="text" id="title" name="title" required><br>
+
+									<!-- Content -->
+									<label for="content">Content:</label>
+									<textarea id="content" name="content" rows="10" cols="80" required></textarea><br>
+
+									<!-- Publish button -->
+									<input type="submit" value="Publish">
+								</form>
+							</body>
+						</header>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %} 
+Reminders
+{% endblock %}
+{% block body %}
+			<!-- Main -->
+				<div class="wrapper style1">
+
+					<div class="container">
+							<div class="reminders" id="sidebar">
+								<hr class="first" />
+								<section>
+									<header>
+										<h3><a href="#">Reminders</a></h3>
+									</header>
+									<div class="row">
+  										<div class="col-4">
+    										<div class="list-group" id="list-tab" role="tablist">
+      										<a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Home</a>
+      										<a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">Profile</a>
+      										<a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages">Messages</a>
+      										<a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings">Settings</a>
+    										</div>
+  										</div>
+  										<div class="col-8">
+    										<div class="tab-content" id="nav-tabContent">
+      										<div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">hello world</div>
+      										<div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+      										<div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+      										<div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+    										</div>
+  										</div>
+									</div>
+								</section>
+							</div>
+						<hr />
+						<div class="row">
+							<article class="col-4 col-12-mobile special">
+								<a href="#" class="image featured"><img src="images/pic07.jpg" alt="" /></a>
+								<header>
+									<h3><a href="#">Gravida aliquam penatibus</a></h3>
+								</header>
+								<p>
+									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
+									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
+								</p>
+							</article>
+							<article class="col-4 col-12-mobile special">
+								<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>
+								<header>
+									<h3><a href="#">Sed quis rhoncus placerat</a></h3>
+								</header>
+								<p>
+									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
+									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
+								</p>
+							</article>
+							<article class="col-4 col-12-mobile special">
+								<a href="#" class="image featured"><img src="images/pic09.jpg" alt="" /></a>
+								<header>
+									<h3><a href="#">Magna laoreet et aliquam</a></h3>
+								</header>
+								<p>
+									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
+									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
+								</p>
+							</article>
+						</div>
+					</div>
+
+				</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block body %}
+<div class="logincontainer">
+    <div class="loginbox">
+        <h1>Sign Up</h1>
+        <form >
+            <label for="username">Create Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Create Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="password">Confirm Password:</label>
+            <input type="password" id="password" name="confirm password" required>
+            <button type="submit" class="button large "> Sign Up</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
