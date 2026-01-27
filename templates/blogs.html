@@ -1,35 +1,35 @@
 {% extends "base.html" %}
-{% block title %} 
-Blogs
-{% endblock %}
+{% block title %} Blogs{% endblock %}
 {% block body %}
 
 			<!-- Main -->
 			 	<h1>Blogs</h1>
 				<div class="wrapper style1">
 					<div class="container">
+					{% for i in postrow %}
 						<article class="post">				
 								<header>
 									<div class="title">
-										<h2><a href="/blogdetail">{{singlepost.title}}</a></h2>
-										<p>{{singlepost.location}}</p>
+										<h2><a href="/blogdetail/{{i.slug}}">{{i.title}}</a></h2>
+										<p>{{i.location}}</p>
 									</div>
 									<div class="meta">
-										<time class="published" datetime="2015-11-01">{{singlepost.date}}</time>
-										<a href="#" class="author"><span class="name">{{singlepost.author}}</span><img src="images/avatar.jpg" alt="" /></a>
+										<time class="published" datetime="2015-11-01">{{i.date}}</time>
+										<a href="#" class="author"><span class="name">{{i.author}}</span><img src="images/avatar.jpg" alt="" /></a>
 									</div>
 								</header>
-								<span class="image featured"><img src="{{singlepost.image}}" alt="" /></span>
-								<p>{{singlepost.subtitle}}</p>
+								<span class="image featured"><img src="{{i.image}}" alt="" /></span>
+								<p>{{i.subtitle}}</p>
 								<footer>
 									<ul class="stats">
 										<li><a href="#">General</a></li>
 									</ul>
 									<ul class="stats">
-										<li><a href="#" class="button large">continue reading</a></li>
+										<li><a href="#" class="button large">Continue Reading</a></li>
 									</ul>
 								</footer>
 							</article>
+					{% endfor %}
 						<hr />
 						<div class="row">
 							<article class="col-4 col-12-mobile special">
