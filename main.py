@@ -28,6 +28,7 @@ class Blog(db.Model):
     image=db.Column(db.String(300))
     content1=db.Column(db.String(500))
     content2=db.Column(db.String(500))
+    slug=db.Column(db.String(200),unique=True)
 
 
 @app.route("/")
@@ -38,14 +39,15 @@ def home():
 def reminders():
     return render_template("reminders.html",param=param)
 
-@app.route("/blogs", methods=["GET"])
+@app.route("/blogs")
 def blogs():
-    singlepost=Blog.query.get(1)
-    return render_template("blogs.html",param=param,singlepost=singlepost)
+    db.session.commit()
+    postrow=Blog.query.all()
+    return render_template("blogs.html",param=param,postrow=postrow)
 
-@app.route("/blogdetail", methods=["GET"])
-def blogdetail():
-    singlepost=Blog.query.get(1)
+@app.route("/blogdetail/<slug>", methods=["GET"])
+def blogdetail(slug):
+    singlepost=Blog.query.filter_by(slug=slug).first()
     return render_template("blogdetail.html",param=param, singlepost=singlepost)
 
 @app.route("/settings")
