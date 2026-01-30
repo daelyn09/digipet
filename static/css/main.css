@@ -3101,7 +3101,7 @@ input, select, textarea {
 	display: flex;
   	justify-content: center;   
  	align-items: center;       
-  	height: 100vh;             
+  	height: 80vh;             
   	background-color: #f5f5f5;
 }
 
@@ -3551,4 +3551,22 @@ form textarea{
 	padding: 20px;
 	margin: 20px;
 	font-size: 25px;
+}
+
+ul i{
+	font-size: 50px;
+	color: black;
+	margin-right: 20px;
+	border: 3px solid black;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+#blog{
+	font-family: 'Source Sans Pro', sans-serif;
+	text-align: center;
+}
+
+.title{
+	text-transform: uppercase;
 }
