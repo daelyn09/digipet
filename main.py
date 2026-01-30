@@ -1,13 +1,16 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request,session,url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
+import math
 
 app=Flask(__name__)
 with open ("config.json","r") as c: 
     param=json.load(c)["parameters"]
 app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
 app.config["SECRET_KEY"]=param["secret_key"]
+adminuser="lyn09"
+adminpassword="12345"
 
 db=SQLAlchemy(app)
 class Contact(db.Model):
@@ -43,7 +46,24 @@ def reminders():
 def blogs():
     db.session.commit()
     postrow=Blog.query.all()
-    return render_template("blogs.html",param=param,postrow=postrow)
+    n=2
+    last=math.ceil(len(postrow)/n)
+    page=request.args.get("page")
+    if (not str(page).isnumeric()):
+        page=1
+    page=int(page)
+    j=(page-1)*n
+    slice=postrow[j:j+n]
+    if page==1:
+        prev="#"
+        next="/?page="+str(page+1)
+    elif page==last:
+        next="#"
+        prev="/?page="+str(page-1)
+    else:
+        prev="/?page="+str(page-1)
+        next="/?page="+str(page+1)
+    return render_template("blogs.html",param=param,slice=slice,prev=prev,next=next)
 
 @app.route("/blogdetail/<slug>", methods=["GET"])
 def blogdetail(slug):
@@ -56,6 +76,12 @@ def settings():
 
 @app.route("/login")
 def login():
+    if request.method=="POST":
+        user=request.form["username"]
+        password=request.form["password"]
+        if user==adminuser and password==adminpassword:
+            session["loggedin"]=True
+            return redirect(dashboard)
     return render_template("login.html",param=param)
 
 @app.route("/signup")
@@ -74,6 +100,13 @@ def contact():
         db.session.add(newrow)
         db.session.commit()
     return render_template("contact.html", param=param)
+
+@app.route("/admin")
+def dashboard():
+    if "loggedin" in session:
+        blog=Blog.query.all()
+        contact=Contact.query.all()
+        return render_template("admin/admin.html")
 
 if __name__=="__main__":
     with app.app_context():
