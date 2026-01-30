@@ -3,10 +3,10 @@
 {% block body %}
 
 			<!-- Main -->
-			 	<h1>Blogs</h1>
+			 	<h1 id="blog">Blogs</h1>
 				<div class="wrapper style1">
 					<div class="container">
-					{% for i in postrow %}
+					{% for i in slice %}
 						<article class="post">				
 								<header>
 									<div class="title">
@@ -22,14 +22,16 @@
 								<p>{{i.subtitle}}</p>
 								<footer>
 									<ul class="stats">
-										<li><a href="#">General</a></li>
-									</ul>
-									<ul class="stats">
-										<li><a href="#" class="button large">Continue Reading</a></li>
+										<li><a href="/blogdetail/{{i.slug}}" class="button large">Continue Reading</a></li>
 									</ul>
 								</footer>
 							</article>
 					{% endfor %}
+							<!-- Pagination -->
+							<ul class="actions-pagination">
+								<a href="{{prev}}"><i class="fa fa-arrow-left"></i></a>
+								<a href="{{next}}"><i class="fa fa-arrow-right"></i></a>
+							</ul>
 						<hr />
 						<div class="row">
 							<article class="col-4 col-12-mobile special">
