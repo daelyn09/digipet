@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Admin Dashboard</title>
+  </head>
+  <body>
+    <h1>Admin Dashboard</h1>
+    <p>
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="#P" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Blogs
+  </a>
+  <a class="btn btn-primary" data-bs-toggle="collapse" href="#C" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Contact
+  </a>
+  <a class="btn btn-primary" href="/editpost/new" role="button">
+    Add New Post
+  </a>
+  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    Log Out
+  </button>
+</p>
+<div class="collapse" id="P">
+  <div class="card card-body">
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Post id</th>
+      <th scope="col">Title</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in blog %}
+    <tr>
+      <th scope="row">{{i.post_id}}</th>
+      <td>{{i.title}}</td>
+      <td><a href="/editpost/{{i.post_id}}"><button type="button" class="btn btn-info">Edit</button></a></td>
+      <td><a href=""><button type="button" class="btn btn-danger">Delete</button></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  </div>
+</div>
+<div class="collapse" id="C">
+  <div class="card card-body">
+    <table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">SNO</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in contact %}
+    <tr>
+      <th scope="row">{{i.sno}}</th>
+      <td>{{i.name}}</td>
+      <td>{{i.email}}</td>
+      <td><a href=""><button type="button" class="btn btn-info">Edit</button></a></td>
+      <td><a href=""><button type="button" class="btn btn-danger">Delete</button></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>
