@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request,session,url_for
+from flask import Flask, render_template, redirect, request,session,url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
@@ -86,6 +86,8 @@ def login():
 
 @app.route("/signup")
 def signup():
+    if request.method=="POST":
+        Name=request.form["name"]
     return render_template("signup.html",param=param)
 
 @app.route("/contact", methods=["GET","POST"])
@@ -106,7 +108,7 @@ def dashboard():
     if "loggedin" in session: #when admin had logged in to the dashboard, all users' blogs and contacts will appear
         blog=Blog.query.all()
         contact=Contact.query.all()
-        return render_template("admin/admin.html",blog=blog,contact=contact)
+        return render_template("admin/admin.html",blog=blog,contact=contact,param=param)
     else:
         return redirect(url_for("login")) #if user tries to log in they will be redirected to login page 
 
@@ -141,6 +143,13 @@ def edit(post_id):
         return redirect(url_for("dashboard"))
     blog=Blog.query.filter_by(post_id=post_id).first()
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id)
+
+@app.route("/delete/<string:post_id>",methods=["GET","POST"])
+def delete(post_id):
+    post=Blog.query.filter_by(post_id=post_id).first()
+    db.session.delete()
+    db.session.commit()
+    return redirect(url_for("dashboard"))
 
 if __name__=="__main__":
     with app.app_context():
