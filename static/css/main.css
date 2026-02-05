@@ -3571,3 +3571,26 @@ ul i{
 	text-transform: uppercase;
 }
 
+h1{
+    text-align: center;
+    padding: 20px;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+p{
+    text-align: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.btn{
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-right: 20px;
+}
