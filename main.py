@@ -46,7 +46,7 @@ def reminders():
 def blogs():
     db.session.commit()
     postrow=Blog.query.all()
-    n=2
+    n=2 #number of posts per page
     last=math.ceil(len(postrow)/n)
     page=request.args.get("page")
     if (not str(page).isnumeric()): 
