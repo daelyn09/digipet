@@ -4,7 +4,10 @@
 <div class="logincontainer">
     <div class="loginbox">
         <h1>Sign Up</h1>
-        <form >
+        {% with meessages=get_flashed_messages() %}
+        {% if messages %}
+        <div style="color: red;">{{messages[0]}} go to <a href="{{url_for('login')}}">Login Page</a></div>{% endif %}{% endwith %}
+        <form method="POST" action="">
             <div class="contactname">
                 <div class="name">
                     <label for="firstname">First Name:</label>
@@ -21,6 +24,9 @@
             <input type="text" id="username" name="email" required>
             <label for="password">Create Password:</label>
             <input type="password" id="password" name="password" required>
+            {% with messages=get_flashed_messages() %}
+            {% if messages %}
+            <div style="color: red;">{{messages[1]}}</div>{% endif %}{% endwith %}
             <label for="password">Confirm Password:</label>
             <input type="password" id="password" name="confirm password" required>
             <button type="submit" class="button large "> Sign Up</button>
