@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
 import math
+from flask_login import LoginManager,login_user,logout_user,login_required,current_user,UserMixin  
+#this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
 
 app=Flask(__name__)
 with open ("config.json","r") as c: 
@@ -11,6 +13,7 @@ app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
 app.config["SECRET_KEY"]=param["secret_key"]
 adminuser="lyn09"
 adminpassword="12345"
+
 
 db=SQLAlchemy(app)
 class Contact(db.Model):
@@ -33,6 +36,13 @@ class Blog(db.Model):
     content2=db.Column(db.String(500))
     slug=db.Column(db.String(200),unique=True)
 
+class Users(UserMixin, db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    first_name=db.Column(db.String(200), nullable=False)
+    last_name=db.Column(db.String(200), nullable=False)
+    username=db.Column(db.String(250), nullable=False)
+    email=db.Column(db.String(200), nullable=False)
+    password=db.Column(db.String(200), nullable=False)
 
 @app.route("/")
 def home():
@@ -79,16 +89,37 @@ def login():
     if request.method=="POST":
         user=request.form["username"]
         password=request.form["password"]
-        if user==adminuser and password==adminpassword:
-            session["loggedin"]=True
+        userrow=Users.query.filter_by(username=user).first()
+        if userrow and userrow.password==password:
+            login_user(userrow)
             return redirect(url_for("dashboard"))
     return render_template("login.html",param=param)
 
-@app.route("/signup")
+@app.route("/signup",methods=["GET","POST"])
 def signup():
     if request.method=="POST":
-        Name=request.form["name"]
+        First_name=request.form["first_name"]
+        Last_name=request.form["last_name"]
+        Username=request.form["username"]
+        Email=request.form["email"]
+        Password=request.form["password"]
+        Confirmpassword=request.form["confirmpassword"]
+        check=Users.query.filter_by(email=Email).first() #when a user typed in existing email address it will give a flash msg
+        if check: 
+            flash("Email address has already existed")
+        elif Password != Confirmpassword:
+            flash("Passwords don't match, try again")
+            return redirect(url_for("signup"))
+        newuser=Users(first_name=First_name,last_name=Last_name,username=Username,email=Email,password=Password)
+        db.session.add(newuser)
+        db.session.commit()
     return render_template("signup.html",param=param)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user() #user can logout using this function
+    return redirect(url_for("login"))
 
 @app.route("/contact", methods=["GET","POST"])
 def contact():
