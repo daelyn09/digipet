@@ -7,7 +7,7 @@
   <a class="btn btn-primary" data-bs-toggle="collapse" href="#P" role="button" aria-expanded="false" aria-controls="collapseExample">
     Blogs
   </a>
-  <a class="btn btn-primary" data-bs-toggle="collapse" href="#C" role="button" aria-expanded="false" aria-controls="collapseExample">
+  <a class="btn btn-primary" style="{{style}}" data-bs-toggle="collapse" href="#C" role="button" aria-expanded="false" aria-controls="collapseExample">
     Contact
   </a>
   <a class="btn btn-primary" href="/editpost/new" role="button">
@@ -52,7 +52,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for i in contact %}
+    {% for i in credentials %}
     <tr>
       <th scope="row">{{i.sno}}</th>
       <td>{{i.name}}</td>
