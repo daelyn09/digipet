@@ -4,6 +4,9 @@
         "secret_key":"12345",
         "local_server":true,
         "local_uri":"mysql://root@localhost/digipet",
-        "title":"DigiPet"
+        "title":"DigiPet",
+        "adminusername":"lyn09",
+        "adminpassword":12345,
+        "adminemail":"lyn@gmail.com"
     }
 }
