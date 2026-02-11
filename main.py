@@ -11,9 +11,13 @@ with open ("config.json","r") as c:
     param=json.load(c)["parameters"]
 app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
 app.config["SECRET_KEY"]=param["secret_key"]
-adminuser="lyn09"
-adminpassword="12345"
+login_manager=LoginManager()
+login_manager.login_view="login"
+login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(user_id)
 
 db=SQLAlchemy(app)
 class Contact(db.Model):
@@ -93,6 +97,14 @@ def login():
         if userrow and userrow.password==password:
             login_user(userrow)
             return redirect(url_for("dashboard"))
+        elif user==param["adminusername"] and password==["adminpassword"]:
+            adminobj=Users(name="admin",email=param["adminemail"],username=param["adminusername"],password=param["adminpassword"])
+            login_user(adminobj)
+            print(current_user.name)
+            return redirect(url_for("dashboard"))
+        else: 
+            flash("Please check your login details and try again")
+            return redirect(url_for("login"))
     return render_template("login.html",param=param)
 
 @app.route("/signup",methods=["GET","POST"])
@@ -106,9 +118,10 @@ def signup():
         Confirmpassword=request.form["confirmpassword"]
         check=Users.query.filter_by(email=Email).first() #when a user typed in existing email address it will give a flash msg
         if check: 
-            flash("Email address has already existed")
+            flash("Email address has already existed","email_error")
+            return redirect(url_for("signup"))
         elif Password != Confirmpassword:
-            flash("Passwords don't match, try again")
+            flash("Passwords don't match","password_error")
             return redirect(url_for("signup"))
         newuser=Users(first_name=First_name,last_name=Last_name,username=Username,email=Email,password=Password)
         db.session.add(newuser)
@@ -135,13 +148,18 @@ def contact():
     return render_template("contact.html", param=param)
 
 @app.route("/admin")
+@login_required
 def dashboard():
-    if "loggedin" in session: #when admin had logged in to the dashboard, all users' blogs and contacts will appear
+    style=""
+    if current_user.name=="admin": #admin login
+        credentials=Users.query.all()
         blog=Blog.query.all()
-        contact=Contact.query.all()
-        return render_template("admin/admin.html",blog=blog,contact=contact,param=param)
-    else:
-        return redirect(url_for("login")) #if user tries to log in they will be redirected to login page 
+    else: #user login
+        user=current_user.name
+        blog=Blog.query.filter_by(author=user)
+        credentials=Users.query.filter_by(name=user)
+        style="display:none;"
+    return render_template("admin/admin.html",blog=blog,credentials=credentials,param=param)
 
 @app.route("/editpost/<string:post_id>", methods=["GET","POST"])
 def edit(post_id):
