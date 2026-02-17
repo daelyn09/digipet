@@ -9,11 +9,28 @@ Reminders
 					<div class="container">
 							<div class="reminders" id="sidebar">
 								<hr class="first" />
-								<section>
-									<header>
-										<h3><a href="#">Reminders</a></h3>
-									</header>
-									<div class="row">
+								<header>
+									<h1>Reminders</h1>
+								</header>
+								<section class="sides">
+									<div id="left">
+										<form>
+											<label>Reminder Title</label>
+											<input type="text" id="text" name="title" placeholder="e.g. Feed pet"><br>
+											<div class="date">
+												<label>Dates</label><br>
+												<input type="date" id="date" name="date" required><br>
+											</div>
+											<div class="time">
+												<label for="time">Time</label><br>
+												<input type="time" id="time" name="time" required><br>
+											</div>
+											<label for="note">Notes</label>
+											<textarea id="note" name="note" rows="4" placeholder="Optional details..."></textarea><br>
+											<button type="submit">Save Reminder</button>
+										</form>
+									</div>
+									<div class="row" id="right">
   										<div class="col-4">
     										<div class="list-group" id="list-tab" role="tablist">
       										<a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Home</a>
