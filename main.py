@@ -17,7 +17,10 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(user_id)
+    if user_id=="admin123":
+        return AdminUser()
+    else:
+        return Users.query.get(user_id)
 
 db=SQLAlchemy(app)
 class Contact(db.Model):
@@ -48,9 +51,25 @@ class Users(UserMixin, db.Model):
     email=db.Column(db.String(200), nullable=False)
     password=db.Column(db.String(200), nullable=False)
 
+class Reminder(db.Model):
+    list_id=db.Column(db.Integer, primary_key=True)
+    username=db.Column(db.String(100))
+    title=db.Column(db.String(100))
+    date=db.Column(db.String(100))
+    time=db.Column(db.String(100))
+    notes=db.Column(db.String(100))
+
+class AdminUser(UserMixin):
+    def __init__(self):
+        self.id="admin123"
+        self.username="admin"
+        self.first_name="admin"
+        self.is_Admin=True
+
 @app.route("/")
 def home():
-    return render_template("index.html")
+    blog=Blog.query.all()
+    return render_template("index.html",blog=blog)
 
 @app.route("/reminders")
 def reminders():
@@ -98,9 +117,9 @@ def login():
             login_user(userrow)
             return redirect(url_for("dashboard"))
         elif user==param["adminusername"] and password==["adminpassword"]:
-            adminobj=Users(name="admin",email=param["adminemail"],username=param["adminusername"],password=param["adminpassword"])
+            adminobj=AdminUser()
             login_user(adminobj)
-            print(current_user.name)
+            print(current_user.first_name)
             return redirect(url_for("dashboard"))
         else: 
             flash("Please check your login details and try again")
@@ -151,13 +170,13 @@ def contact():
 @login_required
 def dashboard():
     style=""
-    if current_user.name=="admin": #admin login
+    if current_user.first_name=="admin": #admin login
         credentials=Users.query.all()
         blog=Blog.query.all()
     else: #user login
-        user=current_user.name
+        user=current_user.first_name
         blog=Blog.query.filter_by(author=user)
-        credentials=Users.query.filter_by(name=user)
+        credentials=Users.query.filter_by(first_name=user)
         style="display:none;"
     return render_template("admin/admin.html",blog=blog,credentials=credentials,param=param)
 
