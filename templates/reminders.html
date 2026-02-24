@@ -14,15 +14,15 @@ Reminders
 								</header>
 								<section class="sides">
 									<div id="left">
-										<form>
+										<form method="POST">
 											<label>Reminder Title</label>
 											<input type="text" id="text" name="title" placeholder="e.g. Feed pet"><br>
 											<div class="date">
-												<label>Dates</label><br>
+												<label>Dates</label>
 												<input type="date" id="date" name="date" required><br>
 											</div>
 											<div class="time">
-												<label for="time">Time</label><br>
+												<label for="time">Time</label>
 												<input type="time" id="time" name="time" required><br>
 											</div>
 											<label for="note">Notes</label>
@@ -30,24 +30,29 @@ Reminders
 											<button type="submit">Save Reminder</button>
 										</form>
 									</div>
-									<div class="row" id="right">
-  										<div class="col-4">
-    										<div class="list-group" id="list-tab" role="tablist">
-      										<a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Home</a>
-      										<a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">Profile</a>
-      										<a class="list-group-item list-group-item-action" id="list-messages-list" data-bs-toggle="list" href="#list-messages" role="tab" aria-controls="list-messages">Messages</a>
-      										<a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings">Settings</a>
-    										</div>
-  										</div>
-  										<div class="col-8">
-    										<div class="tab-content" id="nav-tabContent">
-      										<div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">hello world</div>
-      										<div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
-      										<div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
-      										<div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
-    										</div>
-  										</div>
-									</div>
+									<div class="table-responsive">
+  										<table class="table align-middle">
+    										<thead>
+      										<tr>
+        										...
+      										</tr>
+    										</thead>
+    										<tbody>
+      										<tr>
+        										...
+      										</tr>
+      										<tr class="align-bottom">
+        										...
+      										</tr>
+      										<tr>
+        										<td>...</td>
+        										<td>...</td>
+        										<td class="align-top">This cell is aligned to the top.</td>
+        										<td>...</td>
+      										</tr>
+    										</tbody>
+										</table>
+										</div>
 								</section>
 							</div>
 						<hr />
