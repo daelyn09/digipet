@@ -116,7 +116,7 @@ def login():
         if userrow and userrow.password==password:
             login_user(userrow)
             return redirect(url_for("dashboard"))
-        elif user==param["adminusername"] and password==["adminpassword"]:
+        elif user==param["adminusername"] and password==param["adminpassword"]:
             adminobj=AdminUser()
             login_user(adminobj)
             print(current_user.first_name)
@@ -178,7 +178,7 @@ def dashboard():
         blog=Blog.query.filter_by(author=user)
         credentials=Users.query.filter_by(first_name=user)
         style="display:none;"
-    return render_template("admin/admin.html",blog=blog,credentials=credentials,param=param)
+    return render_template("admin/admin.html",blog=blog,credentials=credentials,style=style,param=param)
 
 @app.route("/editpost/<string:post_id>", methods=["GET","POST"])
 def edit(post_id):
@@ -211,6 +211,20 @@ def edit(post_id):
         return redirect(url_for("dashboard"))
     blog=Blog.query.filter_by(post_id=post_id).first()
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id)
+
+@app.route("/reminder")
+def reminder(list_id):
+    if request.method=="POST":
+        reminder=Reminder.query.filter_by(list_id=list_id).first()     
+        Username=request.form["username"]
+        Title=request.form["title"]
+        Date=request.form["date"]
+        Time=request.form["time"]
+        Notes=request.form["notes"]
+        newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
+        db.session.add(newreminder)
+        db.session.commit   
+    return render_template("reminders.html")
 
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
 def delete(post_id):
