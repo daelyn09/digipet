@@ -6,7 +6,7 @@
         "local_uri":"mysql://root@localhost/digipet",
         "title":"DigiPet",
         "adminusername":"lyn09",
-        "adminpassword":12345,
+        "adminpassword":"12345",
         "adminemail":"lyn@gmail.com"
     }
 }
