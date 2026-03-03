@@ -63,7 +63,7 @@ class AdminUser(UserMixin):
     def __init__(self):
         self.id="admin123"
         self.username="admin"
-        self.first_name="admin"
+        self.first_name="Daelyn"
         self.is_Admin=True
 
 @app.route("/")
@@ -212,19 +212,21 @@ def edit(post_id):
     blog=Blog.query.filter_by(post_id=post_id).first()
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id)
 
-@app.route("/reminder")
+@app.route("/reminder/<string:list_id>",methods=["GET","POST"])
 def reminder(list_id):
-    if request.method=="POST":
-        reminder=Reminder.query.filter_by(list_id=list_id).first()     
+    if request.method=="POST":    
         Username=request.form["username"]
         Title=request.form["title"]
         Date=request.form["date"]
         Time=request.form["time"]
         Notes=request.form["notes"]
-        newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
-        db.session.add(newreminder)
-        db.session.commit   
-    return render_template("reminders.html")
+        if list_id=="new":
+            newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
+            db.session.add(newreminder)
+            db.session.commit()
+            return redirect(url_for("reminder",list_id=newreminder.list_id))
+    reminder=Reminder.query.filter_by(list_id=list_id).first()   
+    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id)
 
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
 def delete(post_id):
