@@ -3573,7 +3573,7 @@ ul i{
 	text-transform: uppercase;
 }
 
-h1{
+h1,h2{
     text-align: center;
     padding: 20px;
 	font-family: 'Source Sans Pro', sans-serif;
