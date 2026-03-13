@@ -3,10 +3,21 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
 import math
-from flask_login import LoginManager,login_user,logout_user,login_required,current_user,UserMixin  
+from flask_login import LoginManager,login_user,logout_user,login_required,current_user,UserMixin
+from flask_mail import Mail, Message
+from werkzeug.utils import secure_filename
 #this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
 
 app=Flask(__name__)
+app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
+app.config['MAIL_PORT']= #port number for the SMTP server. TLS=587, SSL=465
+app.config['MAIL_USERNAME']='francinesalim@gmail.com'
+app.config['MAIL_PASSWORD']="12345"
+app.config['MAIL_USE_TLS']= #enables Transport Layer Security encryption. 
+app.config['MAIL_USE_SSL']= #enables SSL encryption from the start of the connection.
+app.config['UPLOAD_FOLDER']='static/userpic' #where to save uploaded files
+app.config['BLOG_UPLOAD_FOLDER']='static/blogpics' 
+mail=Mail(app)
 with open ("config.json","r") as c: 
     param=json.load(c)["parameters"]
 app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
@@ -210,7 +221,8 @@ def edit(post_id):
             db.session.commit()
         return redirect(url_for("dashboard"))
     blog=Blog.query.filter_by(post_id=post_id).first()
-    return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id)
+    img=url_for('static',filename='blogspic/' + blog.image)
+    return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id,img=img)
 
 @app.route("/reminder/<string:list_id>",methods=["GET","POST"])
 def reminder(list_id):
