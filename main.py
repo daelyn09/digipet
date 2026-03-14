@@ -6,15 +6,16 @@ import math
 from flask_login import LoginManager,login_user,logout_user,login_required,current_user,UserMixin
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
+import os
 #this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
 
 app=Flask(__name__)
 app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
-app.config['MAIL_PORT']= #port number for the SMTP server. TLS=587, SSL=465
+app.config['MAIL_PORT']= 465 #port number for the SMTP server. TLS=587, SSL=465
 app.config['MAIL_USERNAME']='francinesalim@gmail.com'
 app.config['MAIL_PASSWORD']="12345"
-app.config['MAIL_USE_TLS']= #enables Transport Layer Security encryption. 
-app.config['MAIL_USE_SSL']= #enables SSL encryption from the start of the connection.
+app.config['MAIL_USE_TLS']= False #enables Transport Layer Security encryption. 
+app.config['MAIL_USE_SSL']= True #enables SSL encryption from the start of the connection.
 app.config['UPLOAD_FOLDER']='static/userpic' #where to save uploaded files
 app.config['BLOG_UPLOAD_FOLDER']='static/blogpics' 
 mail=Mail(app)
@@ -61,6 +62,7 @@ class Users(UserMixin, db.Model):
     username=db.Column(db.String(250), nullable=False)
     email=db.Column(db.String(200), nullable=False)
     password=db.Column(db.String(200), nullable=False)
+    image=db.Column(db.String(50), nullable=True)
 
 class Reminder(db.Model):
     list_id=db.Column(db.Integer, primary_key=True)
@@ -197,14 +199,20 @@ def edit(post_id):
         Title=request.form["title"]
         Subtitle=request.form["subtitle"]
         Author=request.form["author"]
-        Image=request.form["image"]
+        #Image=request.form["image"]
         Location=request.form["location"]
         Slug=request.form["slug"]
         Date=datetime.now()
         Content1=request.form["content1"]
         Content2=request.form["content2"]
+        image_filename=None
+        if "image" in request.files: #checks if the form actually sent a file field called image
+                file=request.files["image"] #gets the uploaded file from the form
+                if file.filename != "": #if the user doesn't upload any img
+                    image_filename=secure_filename(file.filename) #cleans the filename for safety
+                    file.save(os.path.join(app.config['BLOG_UPLOAD_FOLDER'],image_filename))
         if post_id=="new": #if admin wants to uplaod a new post
-            newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image=Image,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
+            newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image_filename=image_filename,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
             db.session.add(newpost)
             db.session.commit()
         else:
@@ -212,16 +220,19 @@ def edit(post_id):
             blog.title=Title
             blog.subtitle=Subtitle
             blog.author=Author
-            blog.image=Image
+            #blog.image=Image
             blog.location=Location
             blog.slug=Slug
             blog.date=Date
             blog.content1=Content1
             blog.content2=Content2
             db.session.commit()
+            if image_filename: 
+                blog.image=image_filename #only update image if a new one was uploaded
+                db.session.commit()
         return redirect(url_for("dashboard"))
     blog=Blog.query.filter_by(post_id=post_id).first()
-    img=url_for('static',filename='blogspic/' + blog.image)
+    img=url_for('static',filename='blogspic/' + blog.image) if blog and blog.name else None
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id,img=img)
 
 @app.route("/reminder/<string:list_id>",methods=["GET","POST"])
