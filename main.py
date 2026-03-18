@@ -62,7 +62,6 @@ class Users(UserMixin, db.Model):
     username=db.Column(db.String(250), nullable=False)
     email=db.Column(db.String(200), nullable=False)
     password=db.Column(db.String(200), nullable=False)
-    image=db.Column(db.String(50), nullable=True)
 
 class Reminder(db.Model):
     list_id=db.Column(db.Integer, primary_key=True)
@@ -238,7 +237,7 @@ def edit(post_id):
 @app.route("/reminder/<string:list_id>",methods=["GET","POST"])
 def reminder(list_id):
     if request.method=="POST":    
-        Username=request.form["username"]
+        Username=current_user.username
         Title=request.form["title"]
         Date=request.form["date"]
         Time=request.form["time"]
@@ -247,9 +246,17 @@ def reminder(list_id):
             newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
             db.session.add(newreminder)
             db.session.commit()
-            return redirect(url_for("reminder",list_id=newreminder.list_id))
-    reminder=Reminder.query.filter_by(list_id=list_id).first()   
-    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id)
+        else: 
+            reminder=Reminder.query.filter_by(list_id=list_id).first()
+            reminder.title=Title
+            reminder.date=Date
+            reminder.time=Time
+            reminder.notes=Notes
+            db.session.commit()
+        return redirect(url_for("reminder",list_id=newreminder.list_id))
+    reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
+    allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
+    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders)
 
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
 def delete(post_id):
