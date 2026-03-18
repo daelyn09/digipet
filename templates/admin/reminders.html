@@ -7,14 +7,16 @@ Reminders
 				<div class="wrapper style1">
 
 					<div class="container">
-							<div class="reminders" id="sidebar">
-								<hr class="first" />
+						
 								<header>
 									<h1>Reminders</h1>
 								</header>
-								<section class="sides">
+								
+							<div class="reminders" id="sidebar">
+								
 									<div id="left">
-										<form method="POST">
+									<section class="sides">
+										<form method="POST" action="/reminder/{{new}}">
 											<label>Reminder Title</label>
 											<input type="text" id="text" name="title" placeholder="e.g. Feed pet"><br>
 											<div class="date">
@@ -25,46 +27,43 @@ Reminders
 												<label for="time">Time</label>
 												<input type="time" id="time" name="time" required><br>
 											</div>
-											<label for="note">Notes</label>
-											<textarea id="note" name="note" rows="4" placeholder="Optional details..."></textarea><br>
+											<label for="notes">Notes</label>
+											<textarea id="note" name="notes" rows="4" placeholder="Optional details..."></textarea><br>
 											<button type="submit">Save Reminder</button>
 										</form>
+										</section>
 									</div>
-								</section>
-								<section class="sides">
+								
+								
 									<div id="right">
+										<section class="sides">
 										<table class="table">
   											<thead>
     											<tr>
-      											<th scope="col">#</th>
-      											<th scope="col">First</th>
-      											<th scope="col">Last</th>
-      											<th scope="col">Handle</th>
+      											<th scope="col">No.</th>
+      											<th scope="col">Title</th>
+      											<th scope="col">Date</th>
+      											<th scope="col">Notes</th>
+												<th scope="col">Action</th>
     											</tr>
   											</thead>
   											<tbody>
+												{% for i in allreminders %}
     											<tr>
-      											<th scope="row">1</th>
-      											<td>Mark</td>
-      											<td>Otto</td>
-      											<td>@mdo</td>
+      											<td>{{i.list_id}}</td>
+      											<td>{{i.title}}</td>
+												<td>{{i.date}}</td>
+      											<td>{{i.time}}</td>
+												<td>{{i.notes}}</td>
+												<td><a href="/reminder/{{i.list_id}}" class="button">Edit</a></td>
     											</tr>
-    											<tr>
-      											<th scope="row">2</th>
-      											<td>Jacob</td>
-      											<td>Thornton</td>
-      											<td>@fat</td>
-    											</tr>
-    											<tr>
-      											<th scope="row">3</th>
-      											<td colspan="2">Larry the Bird</td>
-      											<td>@twitter</td>
-    											</tr>
+												{% endfor %}
   											</tbody>
 											</table>
-								</section>
-							</div>
-						<hr />
+										</section>
+									</div>
+								</div>
+							<hr>
 						<div class="row">
 							<article class="col-4 col-12-mobile special">
 								<a href="#" class="image featured"><img src="images/pic07.jpg" alt="" /></a>
@@ -97,7 +96,6 @@ Reminders
 								</p>
 							</article>
 						</div>
-					</div>
 
 				</div>
 {% endblock %}
