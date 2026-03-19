@@ -234,6 +234,13 @@ def edit(post_id):
     img=url_for('static',filename='blogspic/' + blog.image) if blog and blog.name else None
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id,img=img)
 
+@app.route("/delete/<string:post_id>",methods=["GET","POST"])
+def delete(post_id):
+    post=Blog.query.filter_by(post_id=post_id).first()
+    db.session.delete()
+    db.session.commit()
+    return redirect(url_for("dashboard"))
+
 @app.route("/reminder/<string:list_id>",methods=["GET","POST"])
 def reminder(list_id):
     if request.method=="POST":    
@@ -258,12 +265,9 @@ def reminder(list_id):
     allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
     return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders)
 
-@app.route("/delete/<string:post_id>",methods=["GET","POST"])
-def delete(post_id):
-    post=Blog.query.filter_by(post_id=post_id).first()
-    db.session.delete()
-    db.session.commit()
-    return redirect(url_for("dashboard"))
+@app.route("/petprofile/<string:pet_id>")
+def reminder(pet_id):
+    return render_template("admin/petprofile.html",param=param)
 
 if __name__=="__main__":
     with app.app_context():
