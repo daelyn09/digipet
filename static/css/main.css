@@ -3088,6 +3088,10 @@ input, select, textarea {
 
 	}
 
+header h1{
+	font-weight: bold;
+}
+
 /*banner*/
 #banner form{
 	display: flex;
@@ -3118,6 +3122,7 @@ input, select, textarea {
 
 .loginbox h1{
 	font-size: 40px;
+	font-weight: bold;
 	padding-bottom: 20px;
 	font-family: 'Source Sans Pro', sans-serif;
 	text-align: center;
@@ -3150,6 +3155,7 @@ form label{
 	padding-top: 25px;
 }
 
+/*Reminders*/
 .reminders{
 	width: 100%;
 	display: flex;
@@ -3162,10 +3168,45 @@ form label{
 	padding-left: 0;
 }
 
+.reminders .button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width:20px;
+}
+
+.reminders label{
+	font-weight: bold;
+}
+
 hr{
 	position: relative;
 	top: 4.5em;
 	margin-bottom: 9em;
+}
+
+/*Edit reminder*/
+
+.editreminders{
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.editreminders form{
+	background-color: #e4e3e3bd;
+	width: 100%;
+	padding: 50px;
+	border-radius: 10px;
+}
+
+.editreminders button{
+	border-radius: 10px;
+}
+
+.editreminders label{
+	font-weight: bold;
 }
 
 /* Post */
@@ -3512,6 +3553,7 @@ hr{
 			border-bottom-color: transparent;
 		}
 
+
 form textarea{
 	width: 100%;
 }
@@ -3520,6 +3562,7 @@ form textarea{
 	width: 405px;
 }
 
+/*contact*/
 .contactcontainer{
 	display: flex;
   	justify-content: center;   
@@ -3539,6 +3582,7 @@ form textarea{
 
 .contactbox h1{
 	font-size: 40px;
+	font-weight: bold;
 	padding-bottom: 20px;
 	font-family: 'Source Sans Pro', sans-serif;
 	text-align: center;
@@ -3580,8 +3624,10 @@ ul i{
 	padding: 10px;
 }
 
+/*Blog*/
 #blog{
 	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: bold;
 	text-align: center;
 }
 
@@ -3613,16 +3659,12 @@ p{
     margin-right: 20px;
 }
 
-.sides{
-	
-}
-
 .sides::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 50%;
+  left: 45%;
   width: 1px;
   background-color: #ccc;
 }
@@ -3631,12 +3673,12 @@ p{
 	color: black;
 	padding: 10px;
 	flex: 1;
-	margin-right: 10px;
+	margin-right: 20px;
 	font-size: 18px;
 }
 
-#left textarea{
-	width: 100%;
+#left textarea, #text{
+	width: 80%;
 }
 
 #left button{
@@ -3647,7 +3689,7 @@ p{
 	color: black;
 	padding: 20px;
 	flex: 1;
-	margin-left: 10px;
+	margin-left: -70px;
 }
 
 label{
