@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %} 
+Edit Reminders
+{% endblock %}
+{% block body %}
+    <div class="wrapper style1">
+        <div class="container">
+			<header>
+				<h1>Edit Reminder</h1>
+			</header>
+			<div class="editreminders">
+					<form method="POST">
+						<label>Reminder Title</label>
+						<input type="text" id="text" name="title" placeholder="e.g. Feed pet" value="{{reminder.title}}"><br>
+						<div class="date">
+							<label>Dates</label>
+							<input type="date" id="date" name="date" required value="{{reminder.date}}"><br>
+						</div>
+						<div class="time">
+							<label for="time">Time</label>
+							<input type="time" id="time" name="time" required value="{{reminder.time}}"><br>
+						</div>
+						<label for="notes">Notes</label>
+						<textarea id="note" name="notes" rows="4" placeholder="Optional details...">{{reminder.notes}}</textarea><br>
+						<button type="submit">Save Reminder</button>
+					</form>
+			</div>
+        </div>
+    </div>		
+{% endblock %}
