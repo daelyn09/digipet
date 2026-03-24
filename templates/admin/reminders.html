@@ -16,7 +16,7 @@ Reminders
 								
 									<div id="left">
 									<section class="sides">
-										<form method="POST" action="/reminder/{{new}}">
+										<form method="POST" action="/reminder/new">
 											<label>Reminder Title</label>
 											<input type="text" id="text" name="title" placeholder="e.g. Feed pet"><br>
 											<div class="date">
@@ -43,19 +43,25 @@ Reminders
       											<th scope="col">No.</th>
       											<th scope="col">Title</th>
       											<th scope="col">Date</th>
+												<th scope="col">Time</th>
       											<th scope="col">Notes</th>
-												<th scope="col">Action</th>
+												<th scope="col">Actions</th>
     											</tr>
   											</thead>
   											<tbody>
 												{% for i in allreminders %}
     											<tr>
-      											<td>{{i.list_id}}</td>
+      											<td>{{loop.index}}</td>
       											<td>{{i.title}}</td>
 												<td>{{i.date}}</td>
       											<td>{{i.time}}</td>
 												<td>{{i.notes}}</td>
-												<td><a href="/reminder/{{i.list_id}}" class="button">Edit</a></td>
+												<td><a href="/editreminder/{{i.list_id}}" class="button">Edit</a></td>
+												<td><a href="/reminder/delete/{{i.list_id}}" onclick="return confirm('Delete this reminder?')" class="button" 
+													style="background-color: rgb(175, 24, 24);" 
+													onmouseover="this.style.backgroundColor='#9c9796'; this.style.color='white';"
+													onmouseout="this.style.backgroundColor='rgb(175, 24, 24)'; this.style.color='white';"
+													>Delete</a></td>
     											</tr>
 												{% endfor %}
   											</tbody>
@@ -63,7 +69,8 @@ Reminders
 										</section>
 									</div>
 								</div>
-							<hr>
+						<hr>
+						<hr>
 
 				</div>
 {% endblock %}
