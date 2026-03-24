@@ -6,14 +6,21 @@ import math
 from flask_login import LoginManager,login_user,logout_user,login_required,current_user,UserMixin
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
-import os
-#this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
-
+import os #this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_uri
+cloudinary.config(
+    cloud_name="dshz7ewkw",
+    api_key="971153553473416",
+    api_secret="33rLc2ZzKqH-Vs-7_qJHM9GUfOE",
+    secure=True
+)
 app=Flask(__name__)
 app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
 app.config['MAIL_PORT']= 465 #port number for the SMTP server. TLS=587, SSL=465
 app.config['MAIL_USERNAME']='francinesalim@gmail.com'
-app.config['MAIL_PASSWORD']="12345"
+app.config['MAIL_PASSWORD']='vdkl lolq yblz xdef'
 app.config['MAIL_USE_TLS']= False #enables Transport Layer Security encryption. 
 app.config['MAIL_USE_SSL']= True #enables SSL encryption from the start of the connection.
 app.config['UPLOAD_FOLDER']='static/userpic' #where to save uploaded files
@@ -171,7 +178,10 @@ def contact():
         Firstname=request.form["first_name"]
         Lastname=request.form["last_name"]
         Email=request.form["email"]
-        Message=request.form["message"]
+        message=request.form["message"]
+        email=Message(Firstname,sender=Email,recipients=["salimdael@gmail.com"])
+        email.body=message+"\n"+Email
+        mail.send(email)
         Date=datetime.today()
         newrow=Contact(first_name=Firstname, last_name=Lastname,email=Email,message=Message,date=Date)
         db.session.add(newrow)
@@ -194,44 +204,43 @@ def dashboard():
 
 @app.route("/editpost/<string:post_id>", methods=["GET","POST"])
 def edit(post_id):
+    blog=None
+    image_url=None
+    if post_id != "new":
+        blog=Blog.query.filter_by(post_id=post_id).first()
+        if blog:
+            image_url=blog.image
+
     if request.method=="POST": #see the blog selected
         Title=request.form["title"]
         Subtitle=request.form["subtitle"]
         Author=request.form["author"]
-        #Image=request.form["image"]
         Location=request.form["location"]
         Slug=request.form["slug"]
         Date=datetime.now()
         Content1=request.form["content1"]
         Content2=request.form["content2"]
-        image_filename=None
-        if "image" in request.files: #checks if the form actually sent a file field called image
-                file=request.files["image"] #gets the uploaded file from the form
-                if file.filename != "": #if the user doesn't upload any img
-                    image_filename=secure_filename(file.filename) #cleans the filename for safety
-                    file.save(os.path.join(app.config['BLOG_UPLOAD_FOLDER'],image_filename))
+        file_to_upload=request.files.get('image')
+        if file_to_upload:
+            upload_result=cloudinary.uploader.upload(file_to_upload)
+            image_url=upload_result["secure_uri"]
         if post_id=="new": #if admin wants to uplaod a new post
-            newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image_filename=image_filename,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
+            newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image=image_url,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
             db.session.add(newpost)
-            db.session.commit()
         else:
-            blog=Blog.query.filter_by(post_id=post_id).first() #update the existing blog
-            blog.title=Title
-            blog.subtitle=Subtitle
-            blog.author=Author
-            #blog.image=Image
-            blog.location=Location
-            blog.slug=Slug
-            blog.date=Date
-            blog.content1=Content1
-            blog.content2=Content2
-            db.session.commit()
-            if image_filename: 
-                blog.image=image_filename #only update image if a new one was uploaded
-                db.session.commit()
+            if blog:
+                blog.title=Title
+                blog.subtitle=Subtitle
+                blog.author=Author
+                blog.image=image_url
+                blog.location=Location
+                blog.slug=Slug
+                blog.date=Date
+                blog.content1=Content1
+                blog.content2=Content2
+        db.session.commit()
         return redirect(url_for("dashboard"))
-    blog=Blog.query.filter_by(post_id=post_id).first()
-    img=url_for('static',filename='blogspic/' + blog.image) if blog and blog.name else None
+    img=image_url if image_url else url_for("static",filename="default.jpg")
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id,img=img)
 
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
@@ -253,21 +262,39 @@ def reminder(list_id):
             newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
             db.session.add(newreminder)
             db.session.commit()
-        else: 
+            return redirect(url_for("reminder",list_id=newreminder.list_id))
+    reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
+    allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
+    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders)
+
+@app.route("/editreminder/<string:list_id>",methods=["GET","POST"])
+def editreminder(list_id):
+        if request.method=="POST":
+            Title=request.form["title"]
+            Date=request.form["date"]
+            Time=request.form["time"]
+            Notes=request.form["notes"]
             reminder=Reminder.query.filter_by(list_id=list_id).first()
             reminder.title=Title
             reminder.date=Date
             reminder.time=Time
             reminder.notes=Notes
             db.session.commit()
-        return redirect(url_for("reminder",list_id=newreminder.list_id))
-    reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
-    allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
-    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders)
+            return redirect(url_for("reminder",list_id="new"))
+        reminder=Reminder.query.filter_by(list_id=list_id).first()
+        return render_template("admin/editreminder.html",param=param,reminder=reminder,list_id=list_id)
 
-@app.route("/petprofile/<string:pet_id>")
-def reminder(pet_id):
-    return render_template("admin/petprofile.html",param=param)
+@app.route("/reminder/delete/<int:list_id>")
+@login_required
+def delete_reminder(list_id):
+    reminder=Reminder.query.filter_by(list_id=list_id).first()
+    db.session.delete(reminder)
+    db.session.commit()
+    return redirect(request.referrer)
+
+#@app.route("/petprofile/<string:pet_id>")
+#def reminder(pet_id):
+    #return render_template("admin/petprofile.html",param=param)
 
 if __name__=="__main__":
     with app.app_context():
