@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 import os #this module is used so that when users has signed up the system will remember their credentials and also more effective than using session
 import cloudinary
 import cloudinary.uploader
-from cloudinary.utils import cloudinary_uri
+from cloudinary.utils import cloudinary_url
 cloudinary.config(
     cloud_name="dshz7ewkw",
     api_key="971153553473416",
@@ -209,7 +209,7 @@ def edit(post_id):
     if post_id != "new":
         blog=Blog.query.filter_by(post_id=post_id).first()
         if blog:
-            image_url=blog.image
+            image_url=blog.image #keep existing image
 
     if request.method=="POST": #see the blog selected
         Title=request.form["title"]
@@ -221,7 +221,7 @@ def edit(post_id):
         Content1=request.form["content1"]
         Content2=request.form["content2"]
         file_to_upload=request.files.get('image')
-        if file_to_upload:
+        if file_to_upload: #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
             upload_result=cloudinary.uploader.upload(file_to_upload)
             image_url=upload_result["secure_uri"]
         if post_id=="new": #if admin wants to uplaod a new post
