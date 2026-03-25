@@ -3708,4 +3708,25 @@ span img{
 	justify-content: space-between;
 }
 
+.editpost{
+	max-width: 600px;
+	padding: 20px;
+	margin: 40px auto;
+	background: rgba(224, 223, 223, 0.938);
+	border-radius: 8px;
+}
 
+.editpost label{
+	display: block;
+	white-space: nowrap;
+	margin-top: 30px;
+}
+
+.editpost input, button{
+	margin-bottom: 30px;
+}
+
+.editpost textarea{
+	width: 500px;
+	height: 200px;
+}
