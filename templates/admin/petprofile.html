@@ -1,14 +1,28 @@
 {% extends "base.html" %}
-{% block title %} Pet Profile{% endblock %}
+{% block title %}Pet Profile{% endblock %}
 {% block body %}
 
 <div class="wrapper style1">
     <div class="container">
         <h1>My Pets</h1>
         <div class="text-center">
-            <img src="image.jpg" class="rounded" alt="Upload a picture of your pet">
-            <input type="file">
-        </div>
+            {% if pet and pet.image %}
+            <a href="{{url_for('reminder', pet_id=pet_id, list_id='new')}}">
+        
+            <img src="{{pet.image}}" alt="{{pet.name}}" class="rounded" style="width:200px; height:200px; object-fit:cover; cursor:pointer;">
+            {% else %}
+                <p>No photo uploaded yet.</p>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <label>Pet Name</label>
+                <input type="text" name="name" placeholder="Pet Name" value="{{ pet.name if pet else '' }}">
+                <input type="file" name="image" accept="image/*">
+                <button type="submit">
+                    {{"Save Changes" if pet else "Add Pet"}}
+                </button>
+            </form>
+        </div> 
     </div>
 </div>
 {% endblock %}
