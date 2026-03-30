@@ -10,12 +10,14 @@ import os #this module is used so that when users has signed up the system will 
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+
 cloudinary.config(
     cloud_name="dshz7ewkw",
     api_key="971153553473416",
     api_secret="33rLc2ZzKqH-Vs-7_qJHM9GUfOE",
     secure=True
 )
+
 app=Flask(__name__)
 app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
 app.config['MAIL_PORT']= 465 #port number for the SMTP server. TLS=587, SSL=465
@@ -57,7 +59,7 @@ class Blog(db.Model):
     location=db.Column(db.String(50))
     author=db.Column(db.String(30))
     date=db.Column(db.Date)
-    image=db.Column(db.String(300))
+    image=db.Column(db.String(300), nullable=True)
     content1=db.Column(db.String(500))
     content2=db.Column(db.String(500))
     slug=db.Column(db.String(200),unique=True)
@@ -72,11 +74,18 @@ class Users(UserMixin, db.Model):
 
 class Reminder(db.Model):
     list_id=db.Column(db.Integer, primary_key=True)
+    pet_id=db.Column(db.Integer, db.ForeignKey("pet.pet_id"), nullable=True)
     username=db.Column(db.String(100))
     title=db.Column(db.String(100))
     date=db.Column(db.String(100))
     time=db.Column(db.String(100))
     notes=db.Column(db.String(100))
+
+class Pet(db.Model):
+    pet_id=db.Column(db.Integer, primary_key=True)
+    username=db.Column(db.String(200), nullable=False)
+    name=db.Column(db.String(200), nullable=False)
+    image=db.Column(db.String(500), nullable=True)
 
 class AdminUser(UserMixin):
     def __init__(self):
@@ -89,10 +98,6 @@ class AdminUser(UserMixin):
 def home():
     blog=Blog.query.all()
     return render_template("index.html",blog=blog)
-
-@app.route("/reminders")
-def reminders():
-    return render_template("reminders.html",param=param)
 
 @app.route("/blogs")
 def blogs():
@@ -222,8 +227,9 @@ def edit(post_id):
         Content2=request.form["content2"]
         file_to_upload=request.files.get('image')
         if file_to_upload: #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
-            upload_result=cloudinary.uploader.upload(file_to_upload)
-            image_url=upload_result["secure_uri"]
+            upload_result = cloudinary.uploader.upload(file_to_upload)
+            image_url = upload_result["secure_url"]
+            print(image_url)
         if post_id=="new": #if admin wants to uplaod a new post
             newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image=image_url,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
             db.session.add(newpost)
@@ -246,12 +252,12 @@ def edit(post_id):
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
 def delete(post_id):
     post=Blog.query.filter_by(post_id=post_id).first()
-    db.session.delete()
+    db.session.delete(post)
     db.session.commit()
     return redirect(url_for("dashboard"))
 
-@app.route("/reminder/<string:list_id>",methods=["GET","POST"])
-def reminder(list_id):
+@app.route("/reminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
+def reminder(pet_id, list_id):
     if request.method=="POST":    
         Username=current_user.username
         Title=request.form["title"]
@@ -259,16 +265,24 @@ def reminder(list_id):
         Time=request.form["time"]
         Notes=request.form["notes"]
         if list_id=="new":
-            newreminder=Reminder(username=Username, title=Title,date=Date,time=Time,notes=Notes)
+            newreminder=Reminder(username=Username, pet_id=pet_id, title=Title,date=Date,time=Time,notes=Notes)
             db.session.add(newreminder)
             db.session.commit()
             return redirect(url_for("reminder",list_id=newreminder.list_id))
+        else:
+            existing=Reminder.query.filter_by(list_id=list_id).first()
+            if existing:
+                existing.title = Title
+                existing.date = Date
+                existing.time = Time
+                existing.notes = Notes
+                db.session.commit()
     reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
     allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
-    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders)
+    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
 
-@app.route("/editreminder/<string:list_id>",methods=["GET","POST"])
-def editreminder(list_id):
+@app.route("/editreminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
+def editreminder(pet_id, list_id):
         if request.method=="POST":
             Title=request.form["title"]
             Date=request.form["date"]
@@ -280,21 +294,48 @@ def editreminder(list_id):
             reminder.time=Time
             reminder.notes=Notes
             db.session.commit()
-            return redirect(url_for("reminder",list_id="new"))
+            return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
         reminder=Reminder.query.filter_by(list_id=list_id).first()
-        return render_template("admin/editreminder.html",param=param,reminder=reminder,list_id=list_id)
+        return render_template("admin/editreminder.html",param=param,reminder=reminder,list_id=list_id, pet_id=pet_id)
 
-@app.route("/reminder/delete/<int:list_id>")
+@app.route("/reminder/delete/<string:pet_id>/<int:list_id>")
 @login_required
-def delete_reminder(list_id):
+def delete_reminder(pet_id, list_id):
     reminder=Reminder.query.filter_by(list_id=list_id).first()
     db.session.delete(reminder)
     db.session.commit()
-    return redirect(request.referrer)
+    return redirect(url_for("reminder",pet_id=pet_id,list_id=list_id))
 
-#@app.route("/petprofile/<string:pet_id>")
-#def reminder(pet_id):
-    #return render_template("admin/petprofile.html",param=param)
+@app.route("/petprofile/<string:pet_id>", methods=["GET","POST"])
+@login_required
+def petprofile(pet_id):
+    pet=None
+    image_url=None
+    if pet_id !="new":
+        pet=Pet.query.filter_by(pet_id=pet_id).first()
+        if pet:
+            image_url=pet.image
+    if request.method == "POST":
+        Name = request.form.get("name")
+        file_to_upload = request.files.get("image")
+        if file_to_upload and file_to_upload.filename != '':
+            upload_result = cloudinary.uploader.upload(file_to_upload)
+            image_url = upload_result["secure_url"]
+        if pet_id == "new":
+            newpet = Pet(username=current_user.username, name=Name, image=image_url)
+            db.session.add(newpet)
+            db.session.commit()
+            return redirect(url_for("petprofile", pet_id=newpet.pet_id))
+        else:
+            if pet:
+                pet.name = Name
+                if image_url:
+                    pet.image = image_url
+                db.session.commit()
+
+    reminders = Reminder.query.filter_by(pet_id=pet_id).all() if pet_id !="new" else []
+    img = image_url if image_url else url_for("static", filename="default.jpg")
+    return render_template("admin/petprofile.html",param=param,pet=pet,pet_id=pet_id,img=image_url,reminders=reminders)
 
 if __name__=="__main__":
     with app.app_context():
