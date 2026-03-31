@@ -10,6 +10,7 @@ import os #this module is used so that when users has signed up the system will 
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+import apscheduler
 
 cloudinary.config(
     cloud_name="dshz7ewkw",
@@ -74,7 +75,7 @@ class Users(UserMixin, db.Model):
 
 class Reminder(db.Model):
     list_id=db.Column(db.Integer, primary_key=True)
-    pet_id=db.Column(db.Integer, db.ForeignKey("pet.pet_id"), nullable=True)
+    pet_id=db.Column(db.Integer, db.ForeignKey("pet.pet_id"), nullable=True) #added a pet id for each pet
     username=db.Column(db.String(100))
     title=db.Column(db.String(100))
     date=db.Column(db.String(100))
