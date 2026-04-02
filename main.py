@@ -269,7 +269,7 @@ def reminder(pet_id, list_id):
             newreminder=Reminder(username=Username, pet_id=pet_id, title=Title,date=Date,time=Time,notes=Notes)
             db.session.add(newreminder)
             db.session.commit()
-            return redirect(url_for("reminder",list_id=newreminder.list_id))
+            return redirect(url_for("reminder",list_id=list_id))
         else:
             existing=Reminder.query.filter_by(list_id=list_id).first()
             if existing:
@@ -279,7 +279,7 @@ def reminder(pet_id, list_id):
                 existing.notes = Notes
                 db.session.commit()
     reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
-    allreminders=Reminder.query.filter_by(username=current_user.username).all() #gets everyone's reminders  
+    allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id).all() #gets everyone's reminders  
     return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
 
 @app.route("/editreminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
@@ -333,10 +333,20 @@ def petprofile(pet_id):
                 if image_url:
                     pet.image = image_url
                 db.session.commit()
-
+                return redirect(url_for("petprofile",pet_id=pet_id))
+    allpets=Pet.query.filter_by(username=current_user.username).all()
     reminders = Reminder.query.filter_by(pet_id=pet_id).all() if pet_id !="new" else []
     img = image_url if image_url else url_for("static", filename="default.jpg")
-    return render_template("admin/petprofile.html",param=param,pet=pet,pet_id=pet_id,img=image_url,reminders=reminders)
+    return render_template("admin/petprofile.html",param=param,pet=pet,pet_id=pet_id,img=img,reminders=reminders, allpets=allpets)
+
+@app.route("/petprofile/delete/<int:pet_id>")
+@login_required
+def deletepet(pet_id):
+    Reminder.query.filter_by(pet_id=pet_id).delete()
+    pet=Pet.query.filter_by(pet_id=pet_id).first()
+    db.session.delete(pet)
+    db.session.commit()
+    return redirect(url_for("petprofile",pet=pet,pet_id=pet_id))
 
 if __name__=="__main__":
     with app.app_context():
