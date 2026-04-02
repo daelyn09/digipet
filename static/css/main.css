@@ -3730,3 +3730,46 @@ span img{
 	width: 500px;
 	height: 200px;
 }
+
+.petcontainer{
+	display: flex;
+	flex-wrap: wrap;
+  	justify-content: flex-start;
+	align-items: flex-start;
+	gap: 20px;
+	width: 100%;       
+  	height: auto;             
+}
+
+.petprofile{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: center;
+	width: 500px;
+	margin: auto;
+}
+
+.pets img{
+	border-radius: 100%;
+	object-fit: cover;
+	height: 200px;
+	width: 200px;
+	cursor: pointer;
+}
+
+.pets{
+	justify-content: space-between;
+	flex-direction: column;
+	display: flex;
+	width: 200px;
+	gap: 8px;
+	align-items: center;
+}
+
+.pets p{
+	margin: 0;
+	font-weight: bold;
+}
