@@ -10,20 +10,32 @@ import os #this module is used so that when users has signed up the system will 
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
-import apscheduler
+from password_strength import PasswordPolicy
+from password_strength import PasswordStats
+from flask_apscheduler import APScheduler
+from apscheduler.jobstores.base import JobLookupError
+from dotenv import load_dotenv
+
+load_dotenv()
+
+policy=PasswordPolicy.from_names(
+    length=8,
+    uppercase=1,
+    numbers=1, #minimum 2 numbers
+)
 
 cloudinary.config(
-    cloud_name="dshz7ewkw",
-    api_key="971153553473416",
-    api_secret="33rLc2ZzKqH-Vs-7_qJHM9GUfOE",
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True
 )
 
 app=Flask(__name__)
 app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
 app.config['MAIL_PORT']= 465 #port number for the SMTP server. TLS=587, SSL=465
-app.config['MAIL_USERNAME']='francinesalim@gmail.com'
-app.config['MAIL_PASSWORD']='vdkl lolq yblz xdef'
+app.config['MAIL_USERNAME']=os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD']=os.getenv("MAIL_PASSWORD")
 app.config['MAIL_USE_TLS']= False #enables Transport Layer Security encryption. 
 app.config['MAIL_USE_SSL']= True #enables SSL encryption from the start of the connection.
 app.config['UPLOAD_FOLDER']='static/userpic' #where to save uploaded files
@@ -33,6 +45,9 @@ with open ("config.json","r") as c:
     param=json.load(c)["parameters"]
 app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
 app.config["SECRET_KEY"]=param["secret_key"]
+scheduler=APScheduler()
+scheduler.init_app(app)
+scheduler.start()
 login_manager=LoginManager()
 login_manager.login_view="login"
 login_manager.init_app(app)
@@ -43,6 +58,37 @@ def load_user(user_id):
         return AdminUser()
     else:
         return Users.query.get(user_id)
+
+def send_reminder_email(email_address,pet_name,title,notes):
+    with app.app_context():
+        msg=Message(f"Reminder for {pet_name}:{title}",
+                    sender=app.config['MAIL_USERNAME'],
+                    recipients=[email_address])
+        msg.body=f"Hi! This is a reminder for {pet_name}.\n\nTask: {title}\n Notes: {notes}"
+        mail.send(msg)
+        print(f"Email sent to {email_address} at {datetime.now()}")
+
+def reload_jobs():
+    with app.app_context():
+        now=datetime.now()
+        future_reminders=Reminder.query.all()
+        for rem in future_reminders:
+            #added this bc there was an error before
+            datetime_str = f"{rem.date} {rem.time}"
+            try:
+                run_at = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                run_at = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+            if run_at>now:
+                pet=Pet.query.get(rem.pet_id)
+                user=Users.query.filter_by(username=rem.username).first()
+                scheduler.add_job(
+                    id=f"reminder_{rem.list_id}",
+                    func=send_reminder_email,
+                    trigger='date',
+                    run_date=run_at,
+                    args=[user.email,pet.name,rem.title,rem.notes]
+                )
 
 db=SQLAlchemy(app)
 class Contact(db.Model):
@@ -102,35 +148,28 @@ def home():
 
 @app.route("/blogs")
 def blogs():
-    db.session.commit()
-    postrow=Blog.query.all()
+    postrow=Blog.query.order_by(Blog.date.desc()).all()
     n=2 #number of posts per page
-    last=math.ceil(len(postrow)/n)
-    page=request.args.get("page")
-    if (not str(page).isnumeric()): 
-        page=1
-    page=int(page)
-    j=(page-1)*n
-    slice=postrow[j:j+n]
-    if page==1:
-        prev="#"
-        next="/?page="+str(page+1)
-    elif page==last:
-        next="#"
-        prev="/?page="+str(page-1)
-    else:
-        prev="/?page="+str(page-1)
-        next="/?page="+str(page+1)
+    total_posts=len(postrow)
+    last=math.ceil(total_posts/n)
+    page=request.args.get("page",1,type=int)
+
+    if page < 1: page = 1
+    if page > last and last > 0: page = last
+    
+    start = (page-1)*n
+    end = start + n
+    slice = postrow[start:end]
+    
+    prev= url_for('blogs', page=page-1) if page > 1 else "#"
+    next= url_for('blogs',page=page+1) if page < last else "#"
+
     return render_template("blogs.html",param=param,slice=slice,prev=prev,next=next)
 
 @app.route("/blogdetail/<slug>", methods=["GET"])
 def blogdetail(slug):
     singlepost=Blog.query.filter_by(slug=slug).first()
     return render_template("blogdetail.html",param=param, singlepost=singlepost)
-
-@app.route("/settings")
-def settings():
-    return render_template("settings.html",param=param)
 
 @app.route("/login",methods=["GET","POST"])
 def login():
@@ -160,9 +199,17 @@ def signup():
         Email=request.form["email"]
         Password=request.form["password"]
         Confirmpassword=request.form["confirmpassword"]
+        checkpolicy=policy.test(Password)
         check=Users.query.filter_by(email=Email).first() #when a user typed in existing email address it will give a flash msg
+        checkusername=Users.query.filter_by(username=Username).first() #when a user typed in existing username it will also give a flash msg
         if check: 
             flash("Email address has already existed","email_error")
+            return redirect(url_for("signup"))
+        elif checkusername: 
+            flash("Username has already existed","username_dupe")
+            return redirect(url_for("signup"))
+        elif checkpolicy:
+            flash("Password not strong enough. Must include uppercase, numbers, and 8+ characters.","pass_not_strong")
             return redirect(url_for("signup"))
         elif Password != Confirmpassword:
             flash("Passwords don't match","password_error")
@@ -226,11 +273,14 @@ def edit(post_id):
         Date=datetime.now()
         Content1=request.form["content1"]
         Content2=request.form["content2"]
+        
         file_to_upload=request.files.get('image')
-        if file_to_upload: #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
+        if file_to_upload and file_to_upload.filename !='': #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
             upload_result = cloudinary.uploader.upload(file_to_upload)
             image_url = upload_result["secure_url"]
-            print(image_url)
+        if image_url is None:
+            image_url=""
+
         if post_id=="new": #if admin wants to uplaod a new post
             newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image=image_url,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
             db.session.add(newpost)
@@ -247,7 +297,7 @@ def edit(post_id):
                 blog.content2=Content2
         db.session.commit()
         return redirect(url_for("dashboard"))
-    img=image_url if image_url else url_for("static",filename="default.jpg")
+    img=image_url if image_url and image_url != "" else url_for("static",filename="default.jpg")
     return render_template("admin/editpost.html",param=param,blog=blog,post_id=post_id,img=img)
 
 @app.route("/delete/<string:post_id>",methods=["GET","POST"])
@@ -265,11 +315,15 @@ def reminder(pet_id, list_id):
         Date=request.form["date"]
         Time=request.form["time"]
         Notes=request.form["notes"]
+
+        run_at = datetime.strptime(f"{Date} {Time}", '%Y-%m-%d %H:%M')
+        pet=Pet.query.get(pet_id)
+
         if list_id=="new":
             newreminder=Reminder(username=Username, pet_id=pet_id, title=Title,date=Date,time=Time,notes=Notes)
             db.session.add(newreminder)
             db.session.commit()
-            return redirect(url_for("reminder",list_id=list_id))
+            target_id=newreminder.list_id
         else:
             existing=Reminder.query.filter_by(list_id=list_id).first()
             if existing:
@@ -278,7 +332,22 @@ def reminder(pet_id, list_id):
                 existing.time = Time
                 existing.notes = Notes
                 db.session.commit()
-    reminder=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
+                target_id=list_id
+
+                try:
+                    scheduler.remove_job(id=f"reminder_{target_id}")
+                except JobLookupError:
+                    pass
+            
+            scheduler.add_job(
+                id=f"reminder_{target_id}",
+                func=send_reminder_email,
+                trigger='date',
+                run_date=run_at,
+                args=[current_user.email,pet.name,Title,Notes]
+            )
+            return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
+    reminder_to_edit=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
     allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id).all() #gets everyone's reminders  
     return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
 
@@ -303,6 +372,10 @@ def editreminder(pet_id, list_id):
 @login_required
 def delete_reminder(pet_id, list_id):
     reminder=Reminder.query.filter_by(list_id=list_id).first()
+    try:
+        scheduler.remove_job(id=f"reminder_{list_id}")
+    except JobLookupError:
+        pass
     db.session.delete(reminder)
     db.session.commit()
     return redirect(url_for("reminder",pet_id=pet_id,list_id=list_id))
@@ -339,7 +412,7 @@ def petprofile(pet_id):
     img = image_url if image_url else url_for("static", filename="default.jpg")
     return render_template("admin/petprofile.html",param=param,pet=pet,pet_id=pet_id,img=img,reminders=reminders, allpets=allpets)
 
-@app.route("/petprofile/delete/<int:pet_id>")
+@app.route("/deletepet/<string:pet_id>")
 @login_required
 def deletepet(pet_id):
     Reminder.query.filter_by(pet_id=pet_id).delete()
@@ -351,4 +424,5 @@ def deletepet(pet_id):
 if __name__=="__main__":
     with app.app_context():
         db.create_all()
-    app.run()
+        reload_jobs()
+    app.run(debug=True)
