@@ -3773,3 +3773,15 @@ span img{
 	margin: 0;
 	font-weight: bold;
 }
+
+.adminbutton{
+	border-radius: 10px;
+	width: auto;
+	height: auto;
+	margin-left: 150px;
+	text-decoration: None;
+}
+
+.adminbutton:hover{
+	text-decoration: underline;
+}
