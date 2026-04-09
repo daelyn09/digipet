@@ -4,7 +4,7 @@
 <div class="logincontainer">
     <div class="loginbox">
         <h1>Sign Up</h1>
-        {% with meessages=get_flashed_messages(category_filter=["email_error"])%}
+        {% with messages=get_flashed_messages(category_filter=["email_error"])%}
         {% if messages %}
         <div style="color: red;">{{messages[0]}} go to <a href="{{url_for('login')}}">Login Page</a></div>{% endif %}{% endwith %}
         <form method="POST" action="">
@@ -18,18 +18,24 @@
                     <input type="text" id="last_name" name="last_name" required>
                 </div>
             </div>
+            {% with messages=get_flashed_messages(category_filter=["username_dupe"])%}
+            {% if messages %}
+            <div style="color: red;">{{messages[0]}}</div>{% endif %}{% endwith %}
             <label for="username">Create Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="username">Email:</label>
             <input type="text" id="email" name="email" required>
+            {% with messages=get_flashed_messages(category_filter=["pass_not_strong"])%}
+            {% if messages %}
+            <div style="color: red;">{{messages[0]}}</div>{% endif %}{% endwith %}
             <label for="password">Create Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
             <label for="password">Confirm Password:</label>
             {% with messages=get_flashed_messages(category_filter=["password_error"])%}
             {% if messages %}
             <div style="color: red;">{{messages[0]}}</div>{% endif %}{% endwith %}
-            <input type="password" id="password" name="confirmpassword" required>
-            <button type="submit" class="button large "> Sign Up</button>
+            <input type="password" id="confirmpassword" name="confirmpassword" required>
+            <button type="submit" class="button large ">Sign Up</button>
         </form>
     </div>
 </div>
