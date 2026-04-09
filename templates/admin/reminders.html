@@ -5,9 +5,8 @@ Reminders
 {% block body %}
 			<!-- Main -->
 				<div class="wrapper style1">
-
+					<a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
 					<div class="container">
-						
 								<header>
 									<h1>Reminders</h1>
 								</header>
@@ -16,7 +15,7 @@ Reminders
 								
 									<div id="left">
 									<section class="sides">
-										<form method="POST" action="/reminder/new">
+										<form method="POST" action="{{url_for('reminder',pet_id=pet_id,list_id=list_id)}}">
 											<label>Reminder Title</label>
 											<input type="text" id="text" name="title" placeholder="e.g. Feed pet"><br>
 											<div class="date">
