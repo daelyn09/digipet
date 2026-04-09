@@ -4,9 +4,12 @@
     <title>Hello, world!</title>
   </head>
   <body>
+  <br>
+  <br>
+    <a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
     <header><h1>Add/Edit Posts</h1></header>
     <div class="editpost">
-    <form method="POST"> 
+    <form method="POST" enctype="multipart/form-data"> 
 
     <label for="inputEmail3" class="col-sm-2 col-form-label">Title</label>
     <input type="text" class="form-control" id="inputEmail3" name="title" placeholder="enter post title" value="{{blog.title}}">
