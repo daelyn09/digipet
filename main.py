@@ -34,8 +34,8 @@ cloudinary.config(
 app=Flask(__name__)
 app.config['MAIL_SERVER']='smtp.gmail.com' #the SMTP server address used to send emails (this means im using gmail)
 app.config['MAIL_PORT']= 465 #port number for the SMTP server. TLS=587, SSL=465
-app.config['MAIL_USERNAME']=os.getenv("MAIL_USERNAME")
-app.config['MAIL_PASSWORD']=os.getenv("MAIL_PASSWORD")
+app.config['MAIL_USERNAME']=os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD']=os.getenv('MAIL_PASSWORD')
 app.config['MAIL_USE_TLS']= False #enables Transport Layer Security encryption. 
 app.config['MAIL_USE_SSL']= True #enables SSL encryption from the start of the connection.
 app.config['UPLOAD_FOLDER']='static/userpic' #where to save uploaded files
@@ -59,11 +59,12 @@ def load_user(user_id):
     else:
         return Users.query.get(user_id)
 
+#for the email notification
 def send_reminder_email(email_address,pet_name,title,notes):
     with app.app_context():
         msg=Message(f"Reminder for {pet_name}:{title}",
                     sender=app.config['MAIL_USERNAME'],
-                    recipients=[email_address])
+                    recipients=['email_address'])
         msg.body=f"Hi! This is a reminder for {pet_name}.\n\nTask: {title}\n Notes: {notes}"
         mail.send(msg)
         print(f"Email sent to {email_address} at {datetime.now()}")
@@ -73,12 +74,8 @@ def reload_jobs():
         now=datetime.now()
         future_reminders=Reminder.query.all()
         for rem in future_reminders:
-            #added this bc there was an error before
-            datetime_str = f"{rem.date} {rem.time}"
-            try:
-                run_at = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
-            except ValueError:
-                run_at = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+            #added this bc there was an error before that said there has to be %S
+            run_at = datetime.strptime(f"{rem.date} {rem.time}", '%Y-%m-%d %H:%M:%S')
             if run_at>now:
                 pet=Pet.query.get(rem.pet_id)
                 user=Users.query.filter_by(username=rem.username).first()
@@ -137,7 +134,7 @@ class Pet(db.Model):
 class AdminUser(UserMixin):
     def __init__(self):
         self.id="admin123"
-        self.username="admin"
+        self.username="lyn09"
         self.first_name="Daelyn"
         self.is_Admin=True
 
@@ -245,7 +242,7 @@ def contact():
 @login_required
 def dashboard():
     style=""
-    if current_user.first_name=="admin": #admin login
+    if current_user.first_name=="Daelyn": #admin login
         credentials=Users.query.all()
         blog=Blog.query.all()
     else: #user login
@@ -270,11 +267,12 @@ def edit(post_id):
         Author=request.form["author"]
         Location=request.form["location"]
         Slug=request.form["slug"]
-        Date=datetime.now()
         Content1=request.form["content1"]
         Content2=request.form["content2"]
+        Date=datetime.now()
         
         file_to_upload=request.files.get('image')
+        #added this
         if file_to_upload and file_to_upload.filename !='': #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
             upload_result = cloudinary.uploader.upload(file_to_upload)
             image_url = upload_result["secure_url"]
@@ -315,7 +313,7 @@ def reminder(pet_id, list_id):
         Date=request.form["date"]
         Time=request.form["time"]
         Notes=request.form["notes"]
-
+        #added this
         run_at = datetime.strptime(f"{Date} {Time}", '%Y-%m-%d %H:%M')
         pet=Pet.query.get(pet_id)
 
@@ -324,6 +322,8 @@ def reminder(pet_id, list_id):
             db.session.add(newreminder)
             db.session.commit()
             target_id=newreminder.list_id
+        
+        #added this
         else:
             existing=Reminder.query.filter_by(list_id=list_id).first()
             if existing:
@@ -349,7 +349,7 @@ def reminder(pet_id, list_id):
             return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
     reminder_to_edit=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
     allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id).all() #gets everyone's reminders  
-    return render_template("admin/reminders.html",param=param,reminder=reminder,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
+    return render_template("admin/reminders.html",param=param,reminder=reminder_to_edit,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
 
 @app.route("/editreminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
 def editreminder(pet_id, list_id):
@@ -372,6 +372,7 @@ def editreminder(pet_id, list_id):
 @login_required
 def delete_reminder(pet_id, list_id):
     reminder=Reminder.query.filter_by(list_id=list_id).first()
+    #added this
     try:
         scheduler.remove_job(id=f"reminder_{list_id}")
     except JobLookupError:
@@ -412,6 +413,34 @@ def petprofile(pet_id):
     img = image_url if image_url else url_for("static", filename="default.jpg")
     return render_template("admin/petprofile.html",param=param,pet=pet,pet_id=pet_id,img=img,reminders=reminders, allpets=allpets)
 
+@app.route("/editpetprofile/<string:pet_id>", methods=["GET","POST"])
+def editpetprofile(pet_id):
+    pet=None
+    image_url=None
+    if pet_id != "new":
+        pet=Pet.query.filter_by(pet_id=pet_id).first()
+        if pet:
+            image_url=pet.image
+
+    if request.method=="POST":
+        Name=request.form["name"]
+
+        file_to_upload=request.files.get('image')
+        #added this
+        if file_to_upload and file_to_upload.filename !='': #checks if user uploaded a new image. if yes, it sends the file to cloudinary, if no, image_url stays as the old one.
+            upload_result = cloudinary.uploader.upload(file_to_upload)
+            image_url = upload_result["secure_url"]
+        if image_url is None:
+            image_url=""
+    
+        if pet:
+            pet.name=Name
+            pet.image=image_url
+        db.session.commit()
+        return redirect(url_for("petprofile",pet_id=pet_id))
+    img=image_url if image_url and image_url != "" else url_for("static",filename="default.jpg")
+    return render_template("admin/editpetprofile.html",param=param,pet=pet,pet_id=pet_id,img=img)
+
 @app.route("/deletepet/<string:pet_id>")
 @login_required
 def deletepet(pet_id):
@@ -425,4 +454,4 @@ if __name__=="__main__":
     with app.app_context():
         db.create_all()
         reload_jobs()
-    app.run(debug=True)
+    app.run()
