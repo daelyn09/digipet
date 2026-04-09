@@ -3,6 +3,7 @@
 {% block body %}
 
 <div class="wrapper style1">
+    <a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
     <h1>My Pets</h1>
     <div class="petcontainer">
         <div class="petprofile">
@@ -12,22 +13,21 @@
                     <img src="{{i.image if i.image else url_for('static', filename='default.jpg')}}" alt="{{i.name}}"> <!-- #the img src means if i.image is empty, it falls back to default.jpg  #alt shows the pet name if the image fails to load.  -->
                 </a>
                 <p>{{i.name}}</p>
-                <a href="/deletepet" onclick="return confirm('Delete {{i.name}}?')">
+                <a href="{{url_for('deletepet',pet_id=i.pet_id)}}" onclick="return confirm('Delete {{i.name}}?')">
                     <button style="background-color: red; color: white;">Delete</button>
                  </a>
+                 <a href="{{url_for('editpetprofile',pet_id=i.pet_id)}}"><button>Edit</button></a>
             </div>
             {% else %}
                 <p>No pets added yet.</p>
             {% endfor %}
             
-            {% if pet_id =="new" %}
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" action="{{url_for('petprofile',pet_id='new')}}">
                 <label>Pet Name</label>
                 <input type="text" name="name" placeholder="Pet Name" value="{{ pet.name if pet else '' }}">
                 <input type="file" name="image" accept="image/*">
-                <a href="/petprofile"><button type="submit">Add Pet</button></a>
+                <button type="submit">Add Pet</button>
             </form>
-            {% endif %}
         </div> 
     </div>
 </div>
