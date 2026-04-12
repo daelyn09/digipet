@@ -60,12 +60,12 @@ def load_user(user_id):
         return Users.query.get(user_id)
 
 #for the email notification
-def send_reminder_email(email_address,pet_name,title,notes):
+def send_reminder_email(email_address,pet_name,title,notes,first_name):
     with app.app_context():
         msg=Message(f"Reminder for {pet_name}:{title}",
                     sender=app.config['MAIL_USERNAME'],
-                    recipients=['email_address'])
-        msg.body=f"Hi! This is a reminder for {pet_name}.\n\nTask: {title}\n Notes: {notes}"
+                    recipients=[email_address])
+        msg.body=f"Hi! This is a reminder for {pet_name}😊.\n\nTask: {title}!📋\nNotes: {notes}"
         mail.send(msg)
         print(f"Email sent to {email_address} at {datetime.now()}")
 
@@ -124,6 +124,7 @@ class Reminder(db.Model):
     date=db.Column(db.String(100))
     time=db.Column(db.String(100))
     notes=db.Column(db.String(100))
+    is_archived=db.Column(db.Boolean, default=False) #added this for archive
 
 class Pet(db.Model):
     pet_id=db.Column(db.Integer, primary_key=True)
@@ -137,6 +138,7 @@ class AdminUser(UserMixin):
         self.username="lyn09"
         self.first_name="Daelyn"
         self.is_Admin=True
+        self.email="francinesalim@gmail.com"
 
 @app.route("/")
 def home():
@@ -229,7 +231,7 @@ def contact():
         Lastname=request.form["last_name"]
         Email=request.form["email"]
         message=request.form["message"]
-        email=Message(Firstname,sender=Email,recipients=["salimdael@gmail.com"])
+        email=Message(Firstname,sender=Email,recipients=["francinesalim@gmail.com"])
         email.body=message+"\n"+Email
         mail.send(email)
         Date=datetime.today()
@@ -318,7 +320,7 @@ def reminder(pet_id, list_id):
         pet=Pet.query.get(pet_id)
 
         if list_id=="new":
-            newreminder=Reminder(username=Username, pet_id=pet_id, title=Title,date=Date,time=Time,notes=Notes)
+            newreminder=Reminder(username=Username, pet_id=pet_id, title=Title,date=Date,time=Time,notes=Notes,is_archived=False)
             db.session.add(newreminder)
             db.session.commit()
             target_id=newreminder.list_id
@@ -339,16 +341,16 @@ def reminder(pet_id, list_id):
                 except JobLookupError:
                     pass
             
-            scheduler.add_job(
-                id=f"reminder_{target_id}",
-                func=send_reminder_email,
-                trigger='date',
-                run_date=run_at,
-                args=[current_user.email,pet.name,Title,Notes]
-            )
-            return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
+        scheduler.add_job(
+            id=f"reminder_{target_id}",
+            func=send_reminder_email,
+            trigger='date',
+            run_date=run_at,
+            args=[current_user.email,pet.name,Title,Notes]
+        )
+        return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
     reminder_to_edit=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
-    allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id).all() #gets everyone's reminders  
+    allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id,is_archived=False).all() #gets everyone's reminders  
     return render_template("admin/reminders.html",param=param,reminder=reminder_to_edit,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
 
 @app.route("/editreminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
@@ -363,6 +365,7 @@ def editreminder(pet_id, list_id):
             reminder.date=Date
             reminder.time=Time
             reminder.notes=Notes
+            reminder.is_archived=False #means it's not archived
             db.session.commit()
             return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
         reminder=Reminder.query.filter_by(list_id=list_id).first()
@@ -449,6 +452,46 @@ def deletepet(pet_id):
     db.session.delete(pet)
     db.session.commit()
     return redirect(url_for("petprofile",pet=pet,pet_id=pet_id))
+
+@app.route("/archive_reminder/<int:list_id>", methods=["GET"])
+@login_required
+def archive_reminder(list_id):
+    #this bypasses SQLAlchemy's caching and sends the SQL command directly to MySQL. this just tells MySQL directly to set is_archived=1 for that specific row. 
+    db.session.execute(
+        db.text("UPDATE reminder SET is_archived = 1 WHERE list_id = :id"),
+        {"id": list_id}
+    )
+    db.session.commit()
+    reminder = db.session.get(Reminder, list_id)
+    return redirect(url_for("archive", pet_id=reminder.pet_id))
+
+@app.route("/archive/<string:pet_id>")
+@login_required
+def archive(pet_id):
+    pet=db.session.get(Pet,pet_id)
+    archived_reminders=Reminder.query.filter_by(pet_id=pet_id, is_archived=True).all()
+    return render_template("admin/archive.html", param=param, pet=pet, allreminders=archived_reminders, pet_id=pet_id)
+
+@app.route("/unarchive_reminder/<int:list_id>")
+@login_required
+def unarchive_reminder(list_id):
+    reminder=db.session.get(Reminder, list_id)
+    reminder.is_archived=False
+    db.session.commit()
+    return redirect(url_for("archive", pet_id=reminder.pet_id))
+
+@app.route("/archive/delete/<string:pet_id>/<int:list_id>")
+@login_required
+def delete_archived_reminder(pet_id,list_id):
+    reminder=Reminder.query.filter_by(list_id=list_id).first()
+    #added this
+    try:
+        scheduler.remove_job(id=f"reminder_{list_id}")
+    except JobLookupError:
+        pass
+    db.session.delete(reminder)
+    db.session.commit()
+    return redirect(url_for("archive",pet_id=pet_id))
 
 if __name__=="__main__":
     with app.app_context():
