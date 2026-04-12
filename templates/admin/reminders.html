@@ -32,11 +32,12 @@ Reminders
 										</form>
 										</section>
 									</div>
-								
+									
 								
 									<div id="right">
 										<section class="sides">
 										<table class="table">
+											<a href="/archive/{{pet_id}}">View Archived Reminders</a>
   											<thead>
     											<tr>
       											<th scope="col">No.</th>
@@ -56,11 +57,12 @@ Reminders
       											<td>{{i.time}}</td>
 												<td>{{i.notes}}</td>
 												<td><a href="/editreminder/{{i.pet_id}}/{{i.list_id}}" class="button">Edit</a></td>
-												<td><a href="/reminder/delete/{{i.pet_id}}/{{i.list_id}}" onclick="return confirm('Delete this reminder?')" class="button" 
+												<td><a href="/reminder/delete/{{i.pet_id}}/{{i.list_id}}" onclick="return confirm('Permanently delete this reminder?')" class="button" 
 													style="background-color: rgb(175, 24, 24);" 
 													onmouseover="this.style.backgroundColor='#9c9796'; this.style.color='white';"
 													onmouseout="this.style.backgroundColor='rgb(175, 24, 24)'; this.style.color='white';"
 													>Delete</a></td>
+												<td><a href="/archive_reminder/{{i.list_id}}" class="button">Archive</a></td>
     											</tr>
 												{% endfor %}
   											</tbody>
