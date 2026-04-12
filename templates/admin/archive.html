@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %} 
+Archived Reminders
+{% endblock %}
+{% block body %}
+
+<h2>Archived Reminders for {{pet.name}}</h2>
+<a href="/reminder/{{pet_id}}/new">&#8592; Back to Reminders</a>
+{% if allreminders %}
+<table class="table">
+  	<thead>
+    	<tr>
+      	<th scope="col">No.</th>
+      	<th scope="col">Title</th>
+      	<th scope="col">Date</th>
+		<th scope="col">Time</th>
+      	<th scope="col">Notes</th>
+		<th scope="col">Actions</th>
+    	</tr>
+  	</thead>
+  	<tbody>
+		{% for i in allreminders %}
+    	<tr>
+      	<td>{{loop.index}}</td>
+      	<td>{{i.title}}</td>
+		<td>{{i.date}}</td>
+      	<td>{{i.time}}</td>
+		<td>{{i.notes}}</td>
+		<td><a href="/unarchive_reminder/{{i.list_id}}" class="button">Recover</a></td>
+		<td><a href="/archive/delete/{{i.pet_id}}/{{i.list_id}}" onclick="return confirm('Permanently delete this reminder?')" class="button" 
+													style="background-color: rgb(175, 24, 24);" 
+													onmouseover="this.style.backgroundColor='#9c9796'; this.style.color='white';"
+													onmouseout="this.style.backgroundColor='rgb(175, 24, 24)'; this.style.color='white';"
+													>Delete</a></td>
+		{% endfor %}
+  	</tbody>
+	</table>
+    {% else %}
+    <p>No archived reminders for {{pet.name}} yet.</p>
+    {% endif %}
+{% endblock %}
