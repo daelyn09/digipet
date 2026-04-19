@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 {% block title %} Admin editpost{% endblock %}
 {% block body %}
-<div class="wrapper style1">
-    <h1>My Pets</h1>
-    <div class="petcontainer">
-        <div class="petprofile">
+<head>
+    <body>
+        <a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
+      <div class="formcontainer">
+            <div class="contactbox">
+            <h1>My Pets</h1>
             <form method="POST" enctype="multipart/form-data">
                 <label for="image" class="col-sm-2 col-form-label">Upload image</label>
                 <input type="file" class="form-control" id="inputEmail3" name="image" placeholder="enter post image">
                 <label>Pet Name</label>
                 <input type="text" name="name" placeholder="Pet Name" value="{{pet.name if pet else ''}}">
-                <button type="submit">Save Pet</button>
+                <button type="submit" class="admin-btn primary">Save Pet</button>
             </form>
         </div>
     </div>
-</div>
+    </body>
+</head>
+
 {% endblock %}
