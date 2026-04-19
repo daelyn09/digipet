@@ -5,12 +5,18 @@
 							<article class="post">
 								<header>
 									<div class="title">
-										<h2><a href="#">{{singlepost.title}}</a></h2>
+										<h2><a>{{singlepost.title}}</a></h2>
 										<p>{{singlepost.subtitle}}</p>
 									</div>
 									<div class="meta">
 										<time class="published" datetime="2015-11-01">{{singlepost.date}}</time>
-										<a href="#" class="author"><span class="name">{{singlepost.author}}</span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VxDe4wzr6eLzRrpRXsqUl1pgSst3Q1XytA&s" alt="" /></a>
+										<span class="author"><span class="name">{{singlepost.author}}</span>
+											{% if singlepost.author == param["adminusername"] %}
+											<img src="https://i.pinimg.com/736x/46/af/b0/46afb0dfc7d37d8c3b82d143611c5299.jpg" alt="" />
+											{% else %}
+											{% set user = Users.query.filter_by(username=singlepost.author).first() %}
+											<img src="{{ user.profile_pic if user and user.profile_pic else url_for('static', filename='images/default.png') }}" alt=""/></span>
+											{% endif %}
 									</div>
 								</header>
 								<span class="image featured"><img src="{{singlepost.image}}" alt="" /></span>
