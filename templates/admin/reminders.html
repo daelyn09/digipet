@@ -4,14 +4,16 @@ Reminders
 {% endblock %}
 {% block body %}
 			<!-- Main -->
+			 <a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
+			 <br>
+			 <a href="{{url_for('petprofile', pet_id='new')}}" class="adminbutton">&#8592; Back to Pet Profile</a>
 				<div class="wrapper style1">
-					<a href="/admin" class="adminbutton">&#8592; Back to Dashboard</a>
 					<div class="container">
 								<header>
 									<h1>Reminders</h1>
 								</header>
 								
-							<div class="reminders" id="sidebar">
+							<div class="reminders scroll-animate" id="sidebar">
 								
 									<div id="left">
 									<section class="sides">
@@ -37,7 +39,7 @@ Reminders
 									<div id="right">
 										<section class="sides">
 										<table class="table">
-											<a href="/archive/{{pet_id}}">View Archived Reminders</a>
+											<a id="viewarchived" href="/archive/{{pet_id}}">View Archived Reminders</a>
   											<thead>
     											<tr>
       											<th scope="col">No.</th>
@@ -50,19 +52,16 @@ Reminders
   											</thead>
   											<tbody>
 												{% for i in allreminders %}
-    											<tr>
+    											<tr style="{% if i.is_past %} color: grey;{% endif %}">
       											<td>{{loop.index}}</td>
       											<td>{{i.title}}</td>
 												<td>{{i.date}}</td>
       											<td>{{i.time}}</td>
 												<td>{{i.notes}}</td>
-												<td><a href="/editreminder/{{i.pet_id}}/{{i.list_id}}" class="button">Edit</a></td>
-												<td><a href="/reminder/delete/{{i.pet_id}}/{{i.list_id}}" onclick="return confirm('Permanently delete this reminder?')" class="button" 
-													style="background-color: rgb(175, 24, 24);" 
-													onmouseover="this.style.backgroundColor='#9c9796'; this.style.color='white';"
-													onmouseout="this.style.backgroundColor='rgb(175, 24, 24)'; this.style.color='white';"
+												<td><a href="/editreminder/{{i.pet_id}}/{{i.list_id}}" class="reminder-btn">Edit</a></td>
+												<td><a href="/reminder/delete/{{i.pet_id}}/{{i.list_id}}" onclick="return confirm('Permanently delete this reminder?')" class="reminder-btn del" 
 													>Delete</a></td>
-												<td><a href="/archive_reminder/{{i.list_id}}" class="button">Archive</a></td>
+												<td><a href="/archive_reminder/{{i.list_id}}" class="reminder-btn archive">Archive</a></td>
     											</tr>
 												{% endfor %}
   											</tbody>
@@ -70,8 +69,9 @@ Reminders
 										</section>
 									</div>
 								</div>
-						<hr>
-						<hr>
+						<br>
+						<br>
 
+					</div>
 				</div>
 {% endblock %}
