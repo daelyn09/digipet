@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% block title %} 
-Edit Reminders
+Edit Reminder
 {% endblock %}
 {% block body %}
-    <div class="wrapper style1">
-        <div class="container">
+<head>
+	<body style="background: #f5f5f5;">
+		<a href="/reminder/{{pet_id}}/new" class="adminbutton">&#8592; Back to Reminders</a>
+        <div class="editremindercontainer">
+			<div class="contactbox">
 			<header>
 				<h1>Edit Reminder</h1>
 			</header>
-			<div class="editreminders">
 					<form method="POST">
 						<label>Reminder Title</label>
 						<input type="text" id="text" name="title" placeholder="e.g. Feed pet" value="{{reminder.title}}"><br>
 						<div class="date">
-							<label>Dates</label>
+							<label>Date</label>
 							<input type="date" id="date" name="date" required value="{{reminder.date}}"><br>
 						</div>
 						<div class="time">
@@ -22,8 +24,11 @@ Edit Reminders
 						</div>
 						<label for="notes">Notes</label>
 						<textarea id="note" name="notes" rows="4" placeholder="Optional details..." value="{{reminder.notes}}"></textarea><br>
-						<button type="submit">Save Reminder</button>
+						<button type="submit" class="admin-bth primary">Save Reminder</button>
 					</form>
         </div>
-    </div>		
+    </div>
+	</body>
+</head>
+
 {% endblock %}
