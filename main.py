@@ -15,6 +15,7 @@ from password_strength import PasswordStats
 from flask_apscheduler import APScheduler
 from apscheduler.jobstores.base import JobLookupError
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -52,6 +53,11 @@ login_manager=LoginManager()
 login_manager.login_view="login"
 login_manager.init_app(app)
 
+#email validation
+def is_valid_email(email):
+    pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    return re.match(pattern, email) is not None
+
 @login_manager.user_loader
 def load_user(user_id):
     if user_id=="admin123":
@@ -60,12 +66,12 @@ def load_user(user_id):
         return Users.query.get(user_id)
 
 #for the email notification
-def send_reminder_email(email_address,pet_name,title,notes,first_name):
+def send_reminder_email(email_address,first_name,pet_name,title,notes):
     with app.app_context():
         msg=Message(f"Reminder for {pet_name}:{title}",
                     sender=app.config['MAIL_USERNAME'],
                     recipients=[email_address])
-        msg.body=f"Hi! This is a reminder for {pet_name}😊.\n\nTask: {title}!📋\nNotes: {notes}"
+        msg.body=f"Hi {first_name}! This is a reminder for {pet_name}😊.\n\nTask: {title}!📋\nNotes: {notes}"
         mail.send(msg)
         print(f"Email sent to {email_address} at {datetime.now()}")
 
@@ -74,7 +80,6 @@ def reload_jobs():
         now=datetime.now()
         future_reminders=Reminder.query.all()
         for rem in future_reminders:
-            #added this bc there was an error before that said there has to be %S
             run_at = datetime.strptime(f"{rem.date} {rem.time}", '%Y-%m-%d %H:%M:%S')
             if run_at>now:
                 pet=Pet.query.get(rem.pet_id)
@@ -84,7 +89,7 @@ def reload_jobs():
                     func=send_reminder_email,
                     trigger='date',
                     run_date=run_at,
-                    args=[user.email,pet.name,rem.title,rem.notes]
+                    args=[user.email,user.first_name,pet.name,rem.title,rem.notes]
                 )
 
 db=SQLAlchemy(app)
@@ -115,6 +120,7 @@ class Users(UserMixin, db.Model):
     username=db.Column(db.String(250), nullable=False)
     email=db.Column(db.String(200), nullable=False)
     password=db.Column(db.String(200), nullable=False)
+    profile_pic=db.Column(db.String(300),nullable=True)
 
 class Reminder(db.Model):
     list_id=db.Column(db.Integer, primary_key=True)
@@ -139,11 +145,19 @@ class AdminUser(UserMixin):
         self.first_name="Daelyn"
         self.is_Admin=True
         self.email="francinesalim@gmail.com"
+        self.profile_pic="https://i.pinimg.com/736x/46/af/b0/46afb0dfc7d37d8c3b82d143611c5299.jpg"
 
 @app.route("/")
 def home():
-    blog=Blog.query.all()
+    blog=Blog.query.order_by(Blog.date.desc()).limit(10).all()
     return render_template("index.html",blog=blog)
+
+def generate_slug(title, post_id):
+    slug=title.lower()
+    slug=re.sub(r'[^a-z0-9\s-]', '', slug)
+    slug = re.sub(r'[\s]+', '-', slug)
+    slug = slug.strip('-')[:30]
+    return f"{slug}-{post_id}"
 
 @app.route("/blogs")
 def blogs():
@@ -159,16 +173,16 @@ def blogs():
     start = (page-1)*n
     end = start + n
     slice = postrow[start:end]
-    
+
     prev= url_for('blogs', page=page-1) if page > 1 else "#"
     next= url_for('blogs',page=page+1) if page < last else "#"
 
-    return render_template("blogs.html",param=param,slice=slice,prev=prev,next=next)
+    return render_template("blogs.html",param=param,slice=slice,prev=prev,next=next,Users=Users)
 
 @app.route("/blogdetail/<slug>", methods=["GET"])
 def blogdetail(slug):
     singlepost=Blog.query.filter_by(slug=slug).first()
-    return render_template("blogdetail.html",param=param, singlepost=singlepost)
+    return render_template("blogdetail.html",param=param, singlepost=singlepost,Users=Users)
 
 @app.route("/login",methods=["GET","POST"])
 def login():
@@ -201,7 +215,10 @@ def signup():
         checkpolicy=policy.test(Password)
         check=Users.query.filter_by(email=Email).first() #when a user typed in existing email address it will give a flash msg
         checkusername=Users.query.filter_by(username=Username).first() #when a user typed in existing username it will also give a flash msg
-        if check: 
+        if not is_valid_email(Email):
+            flash("Please enter a valid email address","email_invalid")
+            return redirect(url_for("signup"))
+        elif check: 
             flash("Email address has already existed","email_error")
             return redirect(url_for("signup"))
         elif checkusername: 
@@ -216,6 +233,8 @@ def signup():
         newuser=Users(first_name=First_name,last_name=Last_name,username=Username,email=Email,password=Password)
         db.session.add(newuser)
         db.session.commit()
+        login_user(newuser)
+        return redirect(url_for("dashboard"))
     return render_template("signup.html",param=param)
 
 @app.route("/logout")
@@ -248,11 +267,54 @@ def dashboard():
         credentials=Users.query.all()
         blog=Blog.query.all()
     else: #user login
-        user=current_user.first_name
-        blog=Blog.query.filter_by(author=user)
-        credentials=Users.query.filter_by(first_name=user)
+        user=current_user.username
+        blog=Blog.query.filter_by(author=user).all()
+        credentials=Users.query.filter_by(username=user).all()
         style="display:none;"
     return render_template("admin/admin.html",blog=blog,credentials=credentials,style=style,param=param)
+
+@app.route("/edituser/<int:id>",methods=["GET","POST"])
+@login_required
+def edituser(id):
+    if current_user.first_name != "Daelyn":
+        flash("Access denied.")
+        return redirect(url_for("dashboard"))
+    user=Users.query.get_or_404(id)
+    if request.method=="POST":
+        Firstname=request.form["first_name"]
+        Lastname=request.form["last_name"]
+        Username=request.form["username"]
+        Email=request.form["email"]
+        user.first_name=Firstname
+        user.last_name=Lastname
+        user.username=Username
+        user.email=Email
+        db.session.commit()
+        return redirect(url_for("dashboard"))
+    return render_template("admin/edituser.html",param=param,user=user)
+
+@app.route("/deleteuser/<int:id>")
+@login_required
+def deleteuser(id):
+    if current_user.first_name !="Daelyn":
+        flash("Access denied.")
+        return redirect(url_for("dashboard"))
+    user=Users.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for("dashboard"))
+
+@app.route("/editprofile",methods=["GET","POST"])
+@login_required
+def editprofile():
+    if request.method=="POST":
+        file=request.files.get("profile_pic")
+        if file and file.filename != "":
+            upload_result=cloudinary.uploader.upload(file)
+            current_user.profile_pic=upload_result["secure_url"]
+            db.session.commit()
+        return redirect(url_for("dashboard"))
+    return render_template("admin/editprofile.html",param=param,user=current_user)
 
 @app.route("/editpost/<string:post_id>", methods=["GET","POST"])
 def edit(post_id):
@@ -266,9 +328,8 @@ def edit(post_id):
     if request.method=="POST": #see the blog selected
         Title=request.form["title"]
         Subtitle=request.form["subtitle"]
-        Author=request.form["author"]
+        Author=current_user.username
         Location=request.form["location"]
-        Slug=request.form["slug"]
         Content1=request.form["content1"]
         Content2=request.form["content2"]
         Date=datetime.now()
@@ -282,8 +343,13 @@ def edit(post_id):
             image_url=""
 
         if post_id=="new": #if admin wants to uplaod a new post
-            newpost=Blog(title=Title,subtitle=Subtitle,author=Author,image=image_url,location=Location,slug=Slug,date=Date,content1=Content1,content2=Content2)
+            newpost=Blog(title=Title,subtitle=Subtitle,author=current_user.username,
+                         image=image_url,location=Location,slug="temp",
+                         date=Date,content1=Content1,content2=Content2)
             db.session.add(newpost)
+            db.session.commit()
+            newpost.slug=generate_slug(Title,newpost.post_id)
+            db.session.commit()
         else:
             if blog:
                 blog.title=Title
@@ -291,7 +357,7 @@ def edit(post_id):
                 blog.author=Author
                 blog.image=image_url
                 blog.location=Location
-                blog.slug=Slug
+                blog.slug=generate_slug(Title, blog.post_id)
                 blog.date=Date
                 blog.content1=Content1
                 blog.content2=Content2
@@ -324,7 +390,7 @@ def reminder(pet_id, list_id):
             db.session.add(newreminder)
             db.session.commit()
             target_id=newreminder.list_id
-        
+
         #added this
         else:
             existing=Reminder.query.filter_by(list_id=list_id).first()
@@ -346,12 +412,15 @@ def reminder(pet_id, list_id):
             func=send_reminder_email,
             trigger='date',
             run_date=run_at,
-            args=[current_user.email,pet.name,Title,Notes]
+            args=[current_user.email,current_user.first_name,pet.name,Title,Notes]
         )
         return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
     reminder_to_edit=Reminder.query.filter_by(list_id=list_id).first() if list_id != "new" else None
     allreminders=Reminder.query.filter_by(username=current_user.username,pet_id=pet_id,is_archived=False).all() #gets everyone's reminders  
-    return render_template("admin/reminders.html",param=param,reminder=reminder_to_edit,list_id=list_id,allreminders=allreminders,pet_id=pet_id)
+    now=datetime.now()
+    for r in allreminders: 
+        r.is_past=(str(r.date)+''+str(r.time)) < now.strftime('%Y-%m-%d %H:%M:%S')
+    return render_template("admin/reminders.html",param=param,reminder=reminder_to_edit,list_id=list_id,allreminders=allreminders,pet_id=pet_id,now=datetime.now())
 
 @app.route("/editreminder/<string:pet_id>/<string:list_id>",methods=["GET","POST"])
 def editreminder(pet_id, list_id):
@@ -367,6 +436,24 @@ def editreminder(pet_id, list_id):
             reminder.notes=Notes
             reminder.is_archived=False #means it's not archived
             db.session.commit()
+            
+            #reschedule the job
+            run_at=datetime.strptime(f"{Date} {Time}",'%Y-%m-%d %H:%M')
+            pet=Pet.query.get(reminder.pet_id)
+            user=Users.query.filter_by(username=reminder.username).first()
+            
+            try:
+                scheduler.remove_job(id=f"reminder_{list_id}")
+            except JobLookupError:
+                pass
+
+            scheduler.add_job(
+                id=f"reminder_{list_id}",
+                func=send_reminder_email,
+                trigger='date',
+                run_date=run_at,
+                args=[current_user.email, current_user.first_name, pet.name, Title, Notes]
+            )
             return redirect(url_for("reminder",pet_id=pet_id,list_id="new"))
         reminder=Reminder.query.filter_by(list_id=list_id).first()
         return render_template("admin/editreminder.html",param=param,reminder=reminder,list_id=list_id, pet_id=pet_id)
@@ -403,7 +490,7 @@ def petprofile(pet_id):
             newpet = Pet(username=current_user.username, name=Name, image=image_url)
             db.session.add(newpet)
             db.session.commit()
-            return redirect(url_for("petprofile", pet_id=newpet.pet_id))
+            return redirect(url_for("reminder", pet_id=newpet.pet_id,list_id="new"))
         else:
             if pet:
                 pet.name = Name
