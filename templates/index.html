@@ -35,6 +35,7 @@
 						</nav>
 
 				</div>
+			
 
 			<!-- Banner -->
 				<section id="banner">
@@ -43,9 +44,22 @@
 					</header>
 				</section>
 
+			<!-- Create Reminder Account -->
+				<section id="reminderacc" class="scroll-animate">
+					<header>
+						<h2>Keep your pet's care on track — create an account to set reminder and never miss a thing.</h2>
+					</header>
+					<a href="/signup"><button class="admin-btn primary">Get Started</button></a>
+				</section>
+
 			<!-- Carousel -->
-				<section class="carousel">
-					<div class="reel">
+				<section class="carousel scroll-animate">
+					<header class="carousel-header">
+							<h2>Latest from the Blog</h2>
+							<p>Tips, stories and advice from out pet community</p>
+							<a href="/blogs" class="admin-btn primary">View All Posts</a>
+						</header>
+					<div class="reel">	
 						{% for i in blog %}
 						<article>
 							<a href="/blogdetail/{{i.slug}}" class="image featured"><img src="{{i.image}}" alt="" /></a>
@@ -61,26 +75,25 @@
 			<!-- Features -->
 				<div class="wrapper style1">
 
-					<section id="features" class="container special">
+					<section id="features" class="container special scroll-animate">
 						<header>
 							<h2>Features</h2>
-							<p>Ipsum volutpat consectetur orci metus consequat imperdiet duis integer semper magna.</p>
 						</header>
 						<div class="row">
-							<article class="col-4 col-12-mobile special">
+							<article class="col-4 col-12-mobile special scroll-animate">
 								<a href="#" class="image featured"><img src="images/pic07.jpg" alt="" /></a>
 								<header>
-									<h3><a href="#">Email-Based Pet Reminder System</a></h3>
+									<h3><a>Email-Based Pet Reminder System</a></h3>
 								</header>
 								<p>
 									DigiPet provides an email-based reminder system that helps users keep track of important pet care tasks such as 
 									feeding, grooming, vet appointments, and medication schedules. Reminders are sent directly to the user’s email, 
 									ensuring notifications are received on time even when the user is not logged into the website.
 							</article>
-							<article class="col-4 col-12-mobile special">
+							<article class="col-4 col-12-mobile special scroll-animate">
 								<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>
 								<header>
-									<h3><a href="#">Pet Profile Management</a></h3>
+									<h3><a>Pet Profile Management</a></h3>
 								</header>
 								<p>
 									The website allows users to create and manage individual pet profiles by entering their pet’s name. 
@@ -88,10 +101,10 @@
 									by clicking on the pet’s profile, making it easier to manage multiple pets efficiently.
 								</p>
 							</article>
-							<article class="col-4 col-12-mobile special">
+							<article class="col-4 col-12-mobile special scroll-animate">
 								<a href="#" class="image featured"><img src="images/pic09.jpg" alt="" /></a>
 								<header>
-									<h3><a href="#">User Blog Feature</a></h3>
+									<h3><a>User Blog Feature</a></h3>
 								</header>
 								<p>
 									DigiPet includes a blog feature that enables users to upload and share articles or information related to their pets. 
@@ -103,7 +116,7 @@
 					</section>
 
 				</div>
-					<div id="footer">
+					<div id="footer" class="scroll-animate">
 					<div class="container">
 						<div class="row">
 							<div class="col-12">
@@ -148,6 +161,16 @@
 			<script src="static/js/breakpoints.min.js"></script>
 			<script src="static/js/util.js"></script>
 			<script src="static/js/main.js"></script>
+			<script>
+				const observer = new IntersectionObserver((entries) => {
+    				entries.forEach(entry => {
+       					if (entry.isIntersecting) {
+            				entry.target.classList.add('visible');
+        				}
+    				});
+				}, { threshold: 0.1 });
 
+				document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+			</script>
 	</body>
 </html>
