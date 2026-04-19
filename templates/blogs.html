@@ -16,23 +16,29 @@
 									</div>
 									<div class="meta">
 										<time class="published" datetime="2015-11-01">{{i.date}}</time>
-										<a href="#" class="author"><span class="name">{{i.author}}</span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7VxDe4wzr6eLzRrpRXsqUl1pgSst3Q1XytA&s" alt="" /></a>
+										<span class="author"><span class="name">{{i.author}}</span>
+											{% if i.author==param["adminusername"] %}
+												<img src="https://i.pinimg.com/736x/46/af/b0/46afb0dfc7d37d8c3b82d143611c5299.jpg" alt="" />
+											{% else %}
+												{% set user=Users.query.filter_by(username=i.author).first() %}
+													<img src="{{ user.profile_pic if user and user.profile_pic else url_for('static', filename='images/default.png') }}" alt="" /></span>
+												{% endif %}
 									</div>
 								</header>
 								<span class="image featured"><img src="{{i.image}}" alt="" /></span>
 								<p>{{i.subtitle}}</p>
 								<footer>
 									<ul class="stats">
-										<li><a href="/blogdetail/{{i.slug}}" class="button large">Continue Reading</a></li>
+										<li><a href="/blogdetail/{{i.slug}}" class="admin-btn primary">Continue Reading</a></li>
 									</ul>
 								</footer>
 							</article>
 					{% endfor %}
 							<!-- Pagination -->
-							<ul class="actions-pagination">
+							<div class="actions-pagination">
 								<a href="{{prev}}"><i class="fa fa-arrow-left"></i></a>
 								<a href="{{next}}"><i class="fa fa-arrow-right"></i></a>
-							</ul>
+							</div>
 						</div>
 					</div>
 {% endblock %}
