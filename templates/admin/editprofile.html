@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %} 
+Edit User
+{% endblock %}
+{% block body %}
+<div class="contactcontainer">
+    <div class="contactbox">
+        <h1>Edit User</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <label>Upload Profile Picture:</label>
+            <input type="file" name="profile_pic">
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
