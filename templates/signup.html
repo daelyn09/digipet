@@ -23,6 +23,9 @@
             <div style="color: red;">{{messages[0]}}</div>{% endif %}{% endwith %}
             <label for="username">Create Username:</label>
             <input type="text" id="username" name="username" required>
+            {% with messages = get_flashed_messages(category_filter=["email_invalid"]) %}
+            {% if messages %}
+            <div style="color:red;">{{messages[0]}}</div>{% endif %}{% endwith %}
             <label for="username">Email:</label>
             <input type="text" id="email" name="email" required>
             {% with messages=get_flashed_messages(category_filter=["pass_not_strong"])%}
