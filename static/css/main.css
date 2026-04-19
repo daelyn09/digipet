@@ -83,7 +83,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #f0f4f4;
+		background: white;
 		color: #5b5b5b;
 		font-size: 15pt;
 		line-height: 1.85em;
@@ -158,7 +158,7 @@ input, select, textarea {
 	}
 
 		a:hover {
-			color: #ef8376;
+			color: #1f618d;
 			border-bottom-color: transparent;
 		}
 
@@ -273,6 +273,25 @@ input, select, textarea {
 			}
 
 		}
+
+.wrapper.style1 .container .post {
+    cursor: pointer;
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.wrapper.style1 .container .post:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 
+        0 12px 32px -8px rgba(0, 0, 0, 0.15),
+        0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+
+.container header h1{
+		margin-top: -100px;
+}
 
 /* Row */
 
@@ -1906,7 +1925,7 @@ input, select, textarea {
 
 	ul.icons {
 		position: relative;
-		background: rgba(128, 128, 128, 0.05);
+		background: #163044;
 		border-radius: 4em;
 		display: inline-block;
 		padding: 0.35em 0.75em 0.35em 0.75em;
@@ -1933,7 +1952,7 @@ input, select, textarea {
 			}
 
 				ul.icons li a:hover {
-					color: #ef8376;
+					color: #1f618d;
 				}
 
 /* Form */
@@ -2105,6 +2124,7 @@ input, select, textarea {
 		}
 		.post p{
 			text-align: justify;
+			font-size: 20px;
 		}
 
 /* Icons */
@@ -2232,6 +2252,11 @@ input, select, textarea {
 			text-align: center;
 			font-size: 1.25em;
 			padding: 0;
+			background-color: #1a5276;
+		}
+
+		#header .button:hover{
+			background-color: #1f618d;
 		}
 
 		#header hr {
@@ -2405,19 +2430,51 @@ input, select, textarea {
 			padding-top: 2em;
 		}
 
+/* Features */
+#features .row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+	margin: 50px;
+}
+
+#features article {
+    background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 40px;
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08);
+}
+
+#features article h3 a {
+    color: #1a5276;
+    text-decoration: none;
+}
+
+#features article p {
+    line-height: 1.7;
+}
+
+#features h2{
+	font-weight: bold;
+}
+
 /* Footer */
 
 	#footer {
 		position: relative;
 		overflow: hidden;
-		padding: 6em 0 6em 0;
-		background: #2b252c;
+		padding: 2em 0 2em 0;
+		background: #0d1f2d;
 		color: #fff;
 	}
 
 		#footer .icon.circled {
 			background: #fff;
-			color: #2b252c;
+			color: #2e6da4;
 		}
 
 		#footer header {
@@ -2435,7 +2492,7 @@ input, select, textarea {
 
 			#footer .contact p {
 				text-align: center;
-				margin: 0 0 3em 0;
+				margin: 0 0 2em 0;
 			}
 
 		#footer .copyright {
@@ -2460,6 +2517,7 @@ input, select, textarea {
 		overflow: hidden;
 		padding: 2em 0 2em 0;
 		margin-bottom: 0;
+		background-color: #f5f5f5;
 	}
 
 		.carousel .forward, .carousel .backward {
@@ -2477,7 +2535,7 @@ input, select, textarea {
 				width: 6em;
 				height: 6em;
 				border-radius: 100%;
-				background-color: #152238;
+				background-color: #1a5276;
 				position: absolute;
 				top: 50%;
 				margin-top: -3em;
@@ -2500,7 +2558,7 @@ input, select, textarea {
 			}
 
 			.carousel .forward:hover:before, .carousel .backward:hover:before {
-				background-color: #9c9796;
+				background-color: #1f618d;
 			}
 
 		.carousel .forward {
@@ -2564,11 +2622,62 @@ input, select, textarea {
 				width: auto;
 				margin-right: -2em;
 				margin-bottom: 3em;
+				object-fit: cover;
+			}
+
+			.carousel article .image img {
+    			width: 100%;
+   				height: 200px;
+    			object-fit: cover;
+    			display: block;
+				border-radius: 10px 10px 0 0;
 			}
 
 			.carousel article p {
 				text-align: center;
 			}
+
+.carousel-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 0 2rem;
+}
+
+.carousel-header h2 {
+    font-size: 2 rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: -20px;
+}
+
+.carousel-header p {
+    color: #888;
+    font-size: 20px;
+    margin: 10px;
+	margin-bottom: 20px;
+}
+
+#reminderacc {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: #f7f6f3;
+    border-top: 0.5px solid rgba(0,0,0,0.08);
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+}
+
+#reminderacc h2 {
+    font-weight: 500;
+    color: #1a1a1a;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+}
+
+#reminderacc .admin-btn {
+    font-size: 16px;
+	font-weight: bold;
+    padding: 16px 48px;
+    border-radius: 10px;
+}
 
 /* Wide */
 
@@ -2597,6 +2706,27 @@ input, select, textarea {
 				}
 
 	}
+
+.carousel article {
+    display: inline-block;
+    width: 18em;
+    background: #fff;
+    text-align: center;
+    padding: 0 1em 3em 1em;
+    margin: 0 2em 0 0;
+    white-space: normal;
+    opacity: 1.0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.75s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carousel article:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 12px 32px -8px rgba(0, 0, 0, 0.15),
+        0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
 
 /* Normal */
 
@@ -3112,12 +3242,56 @@ header h1{
   	background-color: #f5f5f5;
 }
 
-.loginbox{
-  	width: 500px;             
-  	padding: 30px;
-  	background-color: white;
- 	border-radius: 8px;
-  	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.loginbox {
+    width: 500px;
+    padding: 50px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.1), 0 2px 8px -2px rgba(0,0,0,0.06);
+    border: 0.5px solid rgba(0,0,0,0.08);
+}
+
+.loginbox button {
+    width: 100%;
+    padding: 12px;
+    background: #1a5276;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.loginbox button:hover {
+    background: #1f618d;
+}
+
+.loginbox input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.loginbox input:focus {
+    border-color: #1a5276;
+    box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+}
+
+.loginbox label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .loginbox h1{
@@ -3128,15 +3302,20 @@ header h1{
 	text-align: center;
 }
 
-.loginbox h5:hover{
-	text-decoration: underline rgb(64, 116, 184);
+.loginbox h5{
+	text-decoration: underline;
+	color: #152238;
+}
+
+.loginbox h5:hover {
+    text-decoration: underline #1a5276;
+    cursor: pointer;
 }
 
 form{
-padding-left: 20px;
-max-width:500px;
-
+	max-width:500px;
 }
+
 form input ,label,textarea{
         margin-bottom: 1em;
         font-weight: 400;
@@ -3151,7 +3330,6 @@ form label{
 }
 
 .logincontainer h5{
-	padding-left: 20px;
 	padding-top: 25px;
 }
 
@@ -3168,15 +3346,118 @@ form label{
 	padding-left: 0;
 }
 
-.reminders .button{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width:20px;
+.reminders form input,
+.reminders form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.reminders form input:focus,
+.reminders form textarea:focus {
+    border-color: #1a5276;
+    box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+}
+
+.reminders form button {
+    width: 80%;
+    padding: 12px;
+    background: #1a5276;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    box-sizing: border-box;
+}
+
+.reminders form button:hover {
+    background: #1f618d;
+}
+
+.adminbutton {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a5276;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.adminbutton:hover {
+    background: #eaf2f8;
+    text-decoration: none;
+}
+
+.sides {
+    padding: 1.25rem;
+}
+
+.reminder-btn {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    background: #fff;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.reminder-btn:hover {
+    background: #eaf2f8;
+    border-color: #1a5276;
+    color: #1a5276;
+    text-decoration: none;
+}
+
+.reminder-btn.del {
+    color: #c0392b;
+    border-color: rgba(192,57,43,0.25);
+}
+
+.reminder-btn.del:hover {
+    background: #fdf0ee;
+    border-color: #c0392b;
+}
+
+.reminder-btn.archive {
+    color: #856404;
+    border-color: rgba(133,100,4,0.25);
+}
+
+.reminder-btn.archive:hover {
+    background: #fdf8ee;
+    border-color: #e8a838;
 }
 
 .reminders label{
 	font-weight: bold;
+}
+
+#viewarchived{
+	text-decoration: underline;
+	color: #152238;
+}
+
+#viewarchived:hover{
+	text-decoration: underline #1a5276;
+    cursor: pointer;
 }
 
 hr{
@@ -3185,28 +3466,23 @@ hr{
 	margin-bottom: 9em;
 }
 
-/*Edit reminder*/
-
-.editreminders{
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+#left {
+    flex: 1;
+    min-width: 0;
+    padding: 0 10px;
+    overflow: hidden;
 }
 
-.editreminders form{
-	background-color: #e4e3e3bd;
-	width: 100%;
-	padding: 50px;
-	border-radius: 10px;
+#right {
+    flex: 1;
+    min-width: 0;
+    padding: 0 10px;
 }
 
-.editreminders button{
-	border-radius: 10px;
-}
-
-.editreminders label{
-	font-weight: bold;
+.reminders form input[type="date"],
+.reminders form input[type="time"] {
+    width: 150px;
+    box-sizing: border-box;
 }
 
 /* Post */
@@ -3427,7 +3703,11 @@ hr{
 							}
 
 							.post > header .meta .author img {
-								width: 3.5em;
+								width: 45px;
+    							height: 45px;
+    							border-radius: 50%;
+    							object-fit: cover;
+    							display: block;
 							}
 
 		}
@@ -3538,15 +3818,16 @@ hr{
 			-webkit-transition: border-bottom-color 0.2s ease;
 			-ms-transition: border-bottom-color 0.2s ease;
 			transition: border-bottom-color 0.2s ease;
-			border-bottom: dotted 1px rgba(160, 160, 160, 0.65);
 			display: block;
 			margin: 0 1.5em 0 0;
 		}
 
 		.author img {
-			border-radius: 100%;
+			border-radius: 50%;
 			display: block;
-			width: 4em;
+			width: 35px;
+			height: 35px;
+			object-fit: cover;
 		}
 
 		.author:hover .name {
@@ -3571,13 +3852,13 @@ form textarea{
   	background-color: #f5f5f5;
 }
 
-.contactbox{
-	width: 500px;             
-  	padding: 30px;
-	padding-right: 45px;
-  	background-color: white;
- 	border-radius: 8px;
-  	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.contactbox {
+    width: 500px;
+    padding: 40px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.1), 0 2px 8px -2px rgba(0,0,0,0.06);
+    border: 0.5px solid rgba(0,0,0,0.08);
 }
 
 .contactbox h1{
@@ -3588,12 +3869,52 @@ form textarea{
 	text-align: center;
 }
 
-.contactbox button{
-	margin-top: 20px;
+.contactbox button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #1a5276;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.contactbox button:hover {
+    background: #1f618d;
 }
 
 .contactname{
 	display: flex;
+}
+
+.contactbox input,
+.contactbox textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.contactbox input:focus,
+.contactbox textarea:focus {
+    border-color: #1a5276;
+    box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+}
+
+.contactbox label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    display: block;
 }
 
 .name{
@@ -3605,8 +3926,8 @@ form textarea{
     margin-right: 0
 }
 
-.name input{
-	width: 100px;
+.name input {
+    width: 100%;
 }
 
 .stats{
@@ -3692,10 +4013,6 @@ p{
 	margin-left: -70px;
 }
 
-label{
-	font-size: 16px;
-}
-
 span img{
 	max-width: 50%;
 	max-height: 50%;
@@ -3708,18 +4025,76 @@ span img{
 	justify-content: space-between;
 }
 
+.actions-pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    background: #fff;
+    color: #1a5276;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 50px;
+}
+
+.actions-pagination a:hover {
+    background: #eaf2f8;
+    border-color: #1a5276;
+}
+
+/*edit post*/
+
 .editpost{
 	max-width: 600px;
-	padding: 20px;
-	margin: 40px auto;
-	background: rgba(224, 223, 223, 0.938);
-	border-radius: 8px;
+    padding: 30px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.08);
+	display: block;
+}
+
+.editpostcontainer{
+	background-color: #f5f5f5;
+	height: 200vh;  
+}
+
+.editpost form{
+	margin: 20px;
 }
 
 .editpost label{
 	display: block;
-	white-space: nowrap;
-	margin-top: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 20px;
+    margin-bottom: 4px;
+}
+
+.editpost input,
+.editpost textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+    margin-bottom: 0;
+}
+
+.editpost input:focus,
+.editpost textarea:focus {
+    border-color: #1a5276;
+    box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
 }
 
 .editpost input, button{
@@ -3729,35 +4104,100 @@ span img{
 .editpost textarea{
 	width: 500px;
 	height: 200px;
+	resize: vertical;
 }
 
-.petcontainer{
-	display: flex;
-	flex-wrap: wrap;
-  	justify-content: flex-start;
-	align-items: flex-start;
-	gap: 20px;
-	width: 100%;       
-  	height: auto;             
+.editpost button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+    background: #1a5276;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 0;
 }
 
-.petprofile{
-	display: flex;
+.editpost button:hover {
+    background: #1f618d;
+}
+
+.editpost p{
+	padding: 8px 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #555;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    margin-bottom: 14px;
+}
+
+/*pet profile*/
+
+.petprofile {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: auto;
+}
+
+.pets-row {
+    display: flex;
 	flex-wrap: wrap;
-	gap: 20px;
-	justify-content: flex-start;
+    gap: 20px;
+    justify-content: center;
 	align-items: center;
-	text-align: center;
-	width: 500px;
-	margin: auto;
+    width: 100%;
 }
 
-.pets img{
-	border-radius: 100%;
-	object-fit: cover;
-	height: 200px;
-	width: 200px;
-	cursor: pointer;
+.pets {
+    flex: 0 0 200px;
+}
+
+.petprofile form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 50%;
+	margin-top: 20px;
+}
+
+.petprofile form input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 0.5px solid rgba(0,0,0,0.2);
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+
+.petprofile form input[type="text"]:focus {
+    border-color: #1a5276;
+    box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.1);
+}
+
+.pets img {
+    border-radius: 100%;
+    object-fit: cover;
+    height: 200px;
+    width: 200px;
+    cursor: pointer;
+    border: 3px solid #1a5276;
+    transition: border-color 0.15s;
+}
+
+.pets img:hover {
+    border-color: #e8a838;
 }
 
 .pets{
@@ -3774,14 +4214,274 @@ span img{
 	font-weight: bold;
 }
 
-.adminbutton{
-	border-radius: 10px;
-	width: auto;
-	height: auto;
-	margin-left: 150px;
-	text-decoration: None;
+.pet-btn {
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.adminbutton:hover{
-	text-decoration: underline;
+.pet-btn:hover {
+    background: #eaf2f8;
+    border-color: #1a5276;
+    color: #1a5276;
+}
+
+.pet-btn.del {
+    color: #c0392b;
+    border-color: rgba(192,57,43,0.25);
+}
+
+.pet-btn.del:hover {
+    background: #fdf0ee;
+    border-color: #c0392b;
+}
+
+.pet-btn.primary {
+    background: #1a5276;
+    color: #fff;
+    border-color: #1a5276;
+}
+
+.pet-btn.primary:hover {
+    background: #1f618d;
+    color: #fff;
+}
+
+.pet-hint {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+	text-decoration: none;
+}
+
+.pets a{
+	text-decoration: none;
+	border-bottom: none;
+}
+
+.pets a span{
+	font-size: 15px;
+}
+
+/*admin*/
+
+.admincontainer{
+	background-color: #f5f5f5;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+	margin-top: -40px;
+}
+
+.admin-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    background: #fff;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.admin-btn:hover {
+    background: #eaf2f8;
+    border-color: #1a5276;
+    color: #1a5276;
+    text-decoration: none;
+}
+
+td .admin-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.admin-btn.primary:hover {
+    background: #1f618d;
+    color: #fff;
+}
+
+.admin-btn.primary {
+    background: #1a5276;
+    border-color: #1a5276;
+    color: #fff;
+}
+
+.admin-btn.danger:hover {
+    background: #fdf0ee;
+    border-color: #c0392b;
+}
+
+.admin-btn.danger {
+    color: #c0392b;
+    border-color: rgba(192,57,43,0.3);
+}
+
+.admin-section {
+    background: #f5f5f5;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.admin-section-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.admin-section .table{
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
+.admin-section-header h2 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.profile-box {
+    width: 100%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.profilepic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 3px solid #1a5276;
+}
+
+.editprofile {
+    border-radius: 8px;
+    width: auto;
+    padding: 6px 20px;
+    font-size: 13px;
+    background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.editprofile:hover {
+    background: #eaf2f8;
+    border-color: #1a5276;
+    color: #1a5276;
+}
+
+
+.formcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.editremindercontainer{
+	display: flex;
+  	justify-content: center;   
+ 	align-items: center;       
+  	height: 130vh;             
+  	background-color: #f5f5f5;
+}
+
+/*transitions*/
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loginbox,
+.contactbox,
+.reminders,
+.editreminders,
+#blog,
+.inner h1 a,
+.inner footer a {
+    animation: fadeUp 1.5s ease forwards;
+}
+
+#header,
+#header .inner,
+#header h1,
+#logo {
+    animation: none !important;
+}
+
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media screen and (max-width: 736px) {
+    .petprofile {
+        width: 100%;
+    }
+
+    .editpost textarea {
+        width: 100%;
+    }
+
+    .contactbox,
+    .loginbox {
+        width: 90%;
+        padding: 20px;
+    }
+
+    #message {
+        width: 100%;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .reminders {
+        flex-direction: column;
+    }
+
+    #left, #right {
+        width: 100%;
+        margin: 0;
+    }
 }
