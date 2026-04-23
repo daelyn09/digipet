@@ -5,6 +5,11 @@
     <div class="loginbox">
         <h1>Login</h1>
         <form method="POST" action="">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div style="color: red;">{{messages[0]}}</div>
+            {% endif %}
+            {% endwith %}
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
