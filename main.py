@@ -84,6 +84,8 @@ def reload_jobs():
             if run_at>now:
                 pet=Pet.query.get(rem.pet_id)
                 user=Users.query.filter_by(username=rem.username).first()
+                if user is None or pet is None: 
+                    continue
                 scheduler.add_job(
                     id=f"reminder_{rem.list_id}",
                     func=send_reminder_email,
@@ -427,7 +429,7 @@ def editreminder(pet_id, list_id):
         if request.method=="POST":
             Title=request.form["title"]
             Date=request.form["date"]
-            Time=request.form["time"]
+            Time=request.form["time"][:5]
             Notes=request.form["notes"]
             reminder=Reminder.query.filter_by(list_id=list_id).first()
             reminder.title=Title
