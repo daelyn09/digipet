@@ -279,6 +279,11 @@ input, select, textarea {
     border: 0.5px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	max-width: 800px;
+	align-items: center;
+	justify-content: center;
+	margin: -50px auto 100px auto;
+
 }
 
 .wrapper.style1 .container .post:hover {
@@ -289,8 +294,20 @@ input, select, textarea {
         0 4px 12px -4px rgba(0, 0, 0, 0.08);
 }
 
+.wrapper.style1 .container .post .image.featured {
+    width: 70%;
+    margin: 0 auto;
+	padding-bottom: 20px;
+	margin-top: -85px;
+}
+
 .container header h1{
 		margin-top: -100px;
+}
+
+.post .image.image.featured{
+	width: 80%;
+	margin: -10px auto 30px auto;
 }
 
 /* Row */
@@ -3383,6 +3400,13 @@ form label{
     background: #1f618d;
 }
 
+.reminders h3 {
+    color: #1a5276;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
 .adminbutton {
     display: inline-flex;
     align-items: center;
@@ -3404,6 +3428,8 @@ form label{
 
 .sides {
     padding: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .reminder-btn {
@@ -3448,6 +3474,10 @@ form label{
 
 .reminders label{
 	font-weight: bold;
+	color: #1a5276;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 #viewarchived{
@@ -3460,6 +3490,14 @@ form label{
     cursor: pointer;
 }
 
+.archive-table {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px -4px rgba(0,0,0,0.06);
+    padding: 1.25rem;
+}
+
 hr{
 	position: relative;
 	top: 4.5em;
@@ -3467,23 +3505,40 @@ hr{
 }
 
 #left {
-    flex: 1;
+    flex: 0 0 35%;
     min-width: 0;
     padding: 0 10px;
     overflow: hidden;
+    border-right: 1px solid #ccc;
 }
 
 #right {
-    flex: 1;
+    flex: 0 0 65%;
     min-width: 0;
     padding: 0 10px;
 }
+
+#left .sides {
+    border-left: 4px solid #1a5276;
+    padding-left: 16px;
+    background: linear-gradient(to right, rgba(234, 242, 248, 0.5), transparent);
+}
+
+#right .sides {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px -4px rgba(0,0,0,0.06);
+    padding: 1.25rem;
+}
+
 
 .reminders form input[type="date"],
 .reminders form input[type="time"] {
     width: 150px;
     box-sizing: border-box;
 }
+
 
 /* Post */
 
@@ -3980,37 +4035,12 @@ p{
     margin-right: 20px;
 }
 
-.sides::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 45%;
-  width: 1px;
-  background-color: #ccc;
-}
-
-#left{
-	color: black;
-	padding: 10px;
-	flex: 1;
-	margin-right: 20px;
-	font-size: 18px;
-}
-
 #left textarea, #text{
 	width: 80%;
 }
 
 #left button{
 	border-radius: 10px;
-}
-
-#right{
-	color: black;
-	padding: 20px;
-	flex: 1;
-	margin-left: -70px;
 }
 
 span img{
@@ -4149,6 +4179,10 @@ span img{
     margin: auto;
 }
 
+.petcontainer h1{
+	font-weight: bold;
+}
+
 .pets-row {
     display: flex;
 	flex-wrap: wrap;
@@ -4211,7 +4245,7 @@ span img{
 
 .pets p{
 	margin: 0;
-	font-weight: bold;
+	font-size: 25px;
 }
 
 .pet-btn {
@@ -4234,6 +4268,12 @@ span img{
     color: #1a5276;
 }
 
+.petprofile label{
+	font-size: 25px;
+	margin-bottom: 10px;
+	margin-top: 20px;
+}
+
 .pet-btn.del {
     color: #c0392b;
     border-color: rgba(192,57,43,0.25);
@@ -4248,6 +4288,7 @@ span img{
     background: #1a5276;
     color: #fff;
     border-color: #1a5276;
+	font-size: 16px;
 }
 
 .pet-btn.primary:hover {
