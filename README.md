@@ -1,4 +1,4 @@
-###DigiPet
+# DigiPet
 
 DigiPet is a web-based pet care reminder system that helps pet owners stay on top of their daily pet care responsibilities. Users can create pet profiles, schedule reminders, and receive automated email notifications so no important task is ever missed.
 
