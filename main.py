@@ -201,7 +201,7 @@ def login():
             print(current_user.first_name)
             return redirect(url_for("dashboard"))
         else: 
-            flash("Please check your login details and try again")
+            flash("Please check your login details and try again.")
             return redirect(url_for("login"))
     return render_template("login.html",param=param)
 
@@ -218,19 +218,19 @@ def signup():
         check=Users.query.filter_by(email=Email).first() #when a user typed in existing email address it will give a flash msg
         checkusername=Users.query.filter_by(username=Username).first() #when a user typed in existing username it will also give a flash msg
         if not is_valid_email(Email):
-            flash("Please enter a valid email address","email_invalid")
+            flash("Please enter a valid email address.","email_invalid")
             return redirect(url_for("signup"))
         elif check: 
-            flash("Email address has already existed","email_error")
+            flash("Email address has already existed.","email_error")
             return redirect(url_for("signup"))
         elif checkusername: 
-            flash("Username has already existed","username_dupe")
+            flash("Username has already existed.","username_dupe")
             return redirect(url_for("signup"))
         elif checkpolicy:
             flash("Password not strong enough. Must include uppercase, numbers, and 8+ characters.","pass_not_strong")
             return redirect(url_for("signup"))
         elif Password != Confirmpassword:
-            flash("Passwords don't match","password_error")
+            flash("Passwords don't match.","password_error")
             return redirect(url_for("signup"))
         newuser=Users(first_name=First_name,last_name=Last_name,username=Username,email=Email,password=Password)
         db.session.add(newuser)
