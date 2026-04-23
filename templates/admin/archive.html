@@ -8,6 +8,7 @@ Archived Reminders
 	<div class="container">
 <h2>Archived Reminders for {{pet.name}}</h2>
 {% if allreminders %}
+<div class="archive-table">
 <table class="table">
   	<thead>
     	<tr>
@@ -33,6 +34,7 @@ Archived Reminders
 		{% endfor %}
   	</tbody>
 	</table>
+	</div>
     {% else %}
     <p>No archived reminders for {{pet.name}} yet.</p>
     {% endif %}
