@@ -4007,6 +4007,10 @@ ul i{
 	text-align: center;
 }
 
+.post-content {
+    white-space: pre-line;
+}
+
 .title{
 	text-transform: uppercase;
 }
