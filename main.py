@@ -16,6 +16,9 @@ from flask_apscheduler import APScheduler
 from apscheduler.jobstores.base import JobLookupError
 from dotenv import load_dotenv
 import re
+from flask_talisman import Talisman
+
+Talisman(app, content_security_policy=False)
 
 load_dotenv()
 
