@@ -3,7 +3,7 @@
     {
         "secret_key":"12345",
         "local_server":true,
-        "local_uri":"mysql://root@localhost/digipet",
+        "local_uri":"postgresql://neondb_owner:npg_pql1aIDPE5uy@ep-wispy-mountain-abivk5vo-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
         "title":"DigiPet",
         "adminusername":"lyn09",
         "adminpassword":"Dlndcn123!",
