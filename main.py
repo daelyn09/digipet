@@ -80,7 +80,7 @@ def reload_jobs():
         now=datetime.now()
         future_reminders=Reminder.query.all()
         for rem in future_reminders:
-            run_at = datetime.strptime(f"{rem.date} {rem.time}", '%Y-%m-%d %H:%M:%S')
+            run_at = datetime.strptime(f"{rem.date} {rem.time}", '%Y-%m-%d %H:%M')
             if run_at>now:
                 pet=Pet.query.get(rem.pet_id)
                 user=Users.query.filter_by(username=rem.username).first()
@@ -547,7 +547,7 @@ def deletepet(pet_id):
 def archive_reminder(list_id):
     #this bypasses SQLAlchemy's caching and sends the SQL command directly to MySQL. this just tells MySQL directly to set is_archived=1 for that specific row. 
     db.session.execute(
-        db.text("UPDATE reminder SET is_archived = 1 WHERE list_id = :id"),
+        db.text("UPDATE reminder SET is_archived = true WHERE list_id = :id"),
         {"id": list_id}
     )
     db.session.commit()
