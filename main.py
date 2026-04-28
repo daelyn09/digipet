@@ -45,7 +45,7 @@ mail=Mail(app)
 with open ("config.json","r") as c: 
     param=json.load(c)["parameters"]
 app.config["SQLALCHEMY_DATABASE_URI"]=param["local_uri"]
-app.config["SECRET_KEY"]=param["secret_key"]
+app.config["SECRET_KEY"]=os.getenv("SECRET_KEY") or param["secret_key"]
 scheduler=APScheduler()
 scheduler.init_app(app)
 scheduler.start()
