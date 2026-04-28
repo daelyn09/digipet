@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 import re
 from flask_talisman import Talisman
 
-Talisman(app, content_security_policy=False)
 
 load_dotenv()
 
@@ -55,6 +54,8 @@ scheduler.start()
 login_manager=LoginManager()
 login_manager.login_view="login"
 login_manager.init_app(app)
+Talisman(app, content_security_policy=False)
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 #email validation
 def is_valid_email(email):
