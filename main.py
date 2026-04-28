@@ -111,8 +111,8 @@ class Blog(db.Model):
     author=db.Column(db.String(30))
     date=db.Column(db.Date)
     image=db.Column(db.String(300), nullable=True)
-    content1=db.Column(db.String(500))
-    content2=db.Column(db.String(500))
+    content1=db.Column(db.Text)
+    content2=db.Column(db.Text)
     slug=db.Column(db.String(200),unique=True)
 
 class Users(UserMixin, db.Model):
@@ -252,11 +252,11 @@ def contact():
         Lastname=request.form["last_name"]
         Email=request.form["email"]
         message=request.form["message"]
-        email=Message(Firstname,sender=Email,recipients=["francinesalim@gmail.com"])
-        email.body=message+"\n"+Email
-        mail.send(email)
+        msg=Message(Firstname,sender=Email,recipients=["francinesalim@gmail.com"])
+        msg.body=message+"\n"+Email
+        mail.send(msg)
         Date=datetime.today()
-        newrow=Contact(first_name=Firstname, last_name=Lastname,email=Email,message=Message,date=Date)
+        newrow=Contact(first_name=Firstname, last_name=Lastname,email=Email,message=message,date=Date)
         db.session.add(newrow)
         db.session.commit()
     return render_template("contact.html", param=param)
@@ -302,6 +302,10 @@ def deleteuser(id):
         flash("Access denied.")
         return redirect(url_for("dashboard"))
     user=Users.query.get_or_404(id)
+    pets=Pet.query.filter_by(username=user.username).all()
+    for pet in pets:
+        Reminder.query.filter_by(pet_id=pet.pet_id).delete()
+        db.session.delete(pet)
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for("dashboard"))
