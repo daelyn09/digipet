@@ -306,6 +306,7 @@ def deleteuser(id):
     for pet in pets:
         Reminder.query.filter_by(pet_id=pet.pet_id).delete()
         db.session.delete(pet)
+    Blog.query.filter_by(author=user.username).delete()
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for("dashboard"))
