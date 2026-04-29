@@ -287,6 +287,11 @@ def edituser(id):
         Lastname=request.form["last_name"]
         Username=request.form["username"]
         Email=request.form["email"]
+        old_username=user.username
+        if old_username != Username:
+            Pet.query.filter_by(username=old_username).update({"username": Username})
+            Reminder.query.filter_by(username=old_username).update({"username": Username})
+            Blog.query.filter_by(author=old_username).update({"author": Username})
         user.first_name=Firstname
         user.last_name=Lastname
         user.username=Username
@@ -305,7 +310,9 @@ def deleteuser(id):
     pets=Pet.query.filter_by(username=user.username).all()
     for pet in pets:
         Reminder.query.filter_by(pet_id=pet.pet_id).delete()
-        db.session.delete(pet)
+    db.session.flush()
+    Pet.query.filter_by(username=user.username).delete()
+    db.session.flush()
     Blog.query.filter_by(author=user.username).delete()
     db.session.delete(user)
     db.session.commit()
